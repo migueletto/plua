@@ -1,0 +1,135 @@
+Plua 2.0b10:
+- New: second argument to gui.alert() opens Error Dialog if true, or Information Dialog if false or not present
+- Changed: all error messages are shown in the Error Dialog
+- Changed: restored menu and event handlers after running an application from within Plua
+- Changed: online help dialog was changed to allow word selection on all OS versions
+- Bug fix: now buffer.use() does nothing if the the main form is not the active window
+- Bug fix: on some OS versions memos created/changed with Plua did not survive a soft reset
+
+Plua 2.0b9:
+- New: bin.md5() and resource.md5() functions
+- Changed: configurable timeout parameters for TCP and UDP sockets
+- Changed: os.exit() now causes the application to terminate immediately.
+- Changed: functions io.opendir() and io.closedir() were removed from online help, since they do not exist. To open a directory use io.open()
+- Bug fix: function f:readdir() did not work
+- Bug fix: file names returned by os.listdir() were truncated at 31 characters
+- Bug fix: sometimes the contents of lists and popups were replaced by random strings
+- Bug fix: some error messages returned by I/O functions were wrong
+- Bug fix: when reading a Windows bitmap buffer.read() was ignoring the last line
+- Bug fix: on popups gui.setlist() did not adjust the popup width
+- Bug fix: file gadget.h was missing in libkit
+
+Plua 2.0b8:
+- New: gui.main() function to loop forever until appStop event is generated
+- New: gui.sethandler() function to set event handlers
+- New: optional handler field on gui.control() to set event handlers for controls
+- New: resource.list() function to list the resources of a resource database
+- New: gui.button(), gui.pbutton(), gui.rbutton() and gui.selector() accept as an optional last parameter the resource database name from where to get the bitmap
+- New: sound.midi() function to play MIDI files
+- New: new format letters for bin.pack() and bin.unpack() to represent signed integers
+- New: a negative record index in f:openrec() opens the database AppInfo block
+- New: added small icon (both normal and high density)
+- Changed: screen.get() and screen.set() were renamed to screen.getpixel() and screen.setpixel()
+- Changed: to set the elements of a list or popup use gui.setlist() instead of gui.settext()
+- Changed: the unified I/O "db:" specifier now accepts an optional record number after the database name
+- Changed: adjusted the volume range in sound.play()
+- Changed: the fourth value returned by screen.mode() is now true/false, instead of 1/0
+- Changed: gui.confirm() now returns true if Yes was pressed or false if No was pressed
+- Bug fix: possible crash when exiting an application on some devices
+- Bug fix: navigation problems in online help
+- Bug fix: some screen functions did not work after gui.destroy(), gui.dialog(), gui.alert(), gui.confirm(), gui.input(), gui.selectcolor(), gui.selecttime() or gui.selectdate()
+- Bug fix: sometimes gui.popup() created popups with wrong vertical size
+- Bug fix: gui.setstate() did not position the selected element correctly on popups
+- Bug fix: math.randomseed() did not support large seeds
+- Bug fix: plua2c was generating a wrong application type for libraries
+- Bug fix: plua2c was always overwriting the application icon with its own default icon
+
+Plua 2.0b7:
+- New: Plua FAQ document
+- New: unified I/O "rsrc:" specifier for opening resources (useful for sound.play() function)
+- New: f:getrecid() function for retrieving a database record unique ID
+- New: documented the sprite.* functions
+- New: screen.jump() function
+- Changed: screen.heading() and screen.turn() now use radians
+- Changed: up to 3 sounds can be played simultaneously with sound.play()
+- Bug fix: floating point numbers starting with "." were not recognized
+- Bug fix: gui.list() and gui.popup() were not returning the control ID
+- Bug fix: problem with gui.field() width
+- Bug fix: a second call to gui.destroy() did not erase the form
+- Bug fix: buffer.put() ignored the mode parameter
+- Bug fix: screen.circle() did not draw a complete circle
+- Bug fix: screen.rect() used 2 pixels wide lines
+
+Plua 2.0b6:
+- New: events are better documented in pluadoc.htm
+- New: string.format() now supports floating point formating
+- New: gui.control function
+- New: more example applications (on a separate package)
+- Changed: the selected element index in gui.slider() now starts at 1
+- Changed: the second parameter to screen.moveto() is now optional
+- Changed: more accurate timing in gui.event()
+- Changed: new high density icon
+- Changed: increased stack space
+- Changed: direct screen draw is disabled if the menu is open
+- Bug fix: ctlRepeat event was sent only once
+- Bug fix: call to SrcEdit did not work
+- Bug fix: floating point numbers ended in "." were not recognized
+- Bug fix: menu state was not always restored
+
+Plua 2.0b5:
+- Bug fix: workaround for string.lower() crashing on some devices
+- Bug fix: f:openrec() returned error even if it succeeded
+- Bug fix: io.open() failed for "srm:" device
+- Bug fix: network interface was not properly restored after a power-off
+- Bug fix: ioPending event was not always beeing raised
+- Bug fix: corrected output formating of "-0"
+- Bug fix: Goto button in error dialogs did not always work
+- New: removerec function, which calls the PalmOS API DmRemoveRecord
+- Changed: deleterec now calls the PalmOS API DmDeleteRecord
+- Changed: bitwise functions were moved to namespace bit
+- Changed: pack/unpack functions were moved to namespace bin
+- Changed: plua2c command line options were changed to make it similar to luac
+- Changed: this release is not binary compatible with previous releases
+- Changed: source code synchronized with Lua 5.0.3
+- Changed: the ui namespace was replaced by the namespaces gui, screen, sound, buffer, and resource. The constants in ui namespace were moved to the global namespace
+- Changed: the ui.textwidth function was replaced by screen.textsize, which returns the width and height of a string in pixels
+- Changed: the help index contains just the function name
+- Changed: for lists and popups now gui.getstate() and gui.setstate() use 1 as the index of the first item (before it was 0)
+- Changed: the desktop compiler and the examples are distributed in separate packages
+
+Plua 2.0b4:
+- Bug fix: in case of error, ui.readbufer and ui.writebuffer did not return the correct error message
+- Bug fix: plua2c on Windows compiled wrong binary resources
+- Bug fix: plua2c did not print error messages properly
+- Changed: libkit behavior was changed to make it compatible with the loadlib function present in Lua5. The Plua specific functions os.loadlib and os.removelib were removed
+- Changed: in ui.popSelect and ui.lstSelect events now the selected element starts with index 1
+- Changed: the Plua homepage URL was updated in About box
+- New: online help
+
+Plua 2.0b3:
+- Bug fix: sometimes the year returned by os.date() was incorrect
+- Bug fix: createrec now returns the record index
+- Bug fix: code created by pluac had wrong Integer size
+- Changed: the Plua 2 desktop compiler was renamed to "plua2c", to differentiate it from the Plua 1 desktop compiler, named "pluac"
+- Changed: in io.open the file name is now a URL
+- Changed: listdb, listdir and mkdir were moved from io group to os group
+- Changed: corrections to the documentation
+- Changed: code clean up
+
+Plua 2.0b2:
+- New: runtime implemented
+- New: libkit implemented
+- New: desktop compiler implemented
+- New: function io.readdir implemented
+- Bug fix: sometimes there were wrong menu items after ui.menu
+- Bug fix: os.date() did not work
+- Bug fix: ltablib was not included
+
+Plua 2.0b1:
+- Changed: Plua 2.X is based on Lua 5.0
+- Changed: includes all extentions present in Plua 1.X, but the functions are distributed into tables (io, os, util, ui). Functions names lost the initial "p" characteristic of Plua 1.X
+- Missing: Plua 2.X support for libkit is not available yet
+- Missing: Plua 2.X does not have a desktop compiler yet
+- Missing: Plua 2.X does not have a runtime yet
+- Missing: Plua 2.X does not have online help yet
+- New: appStop event. Handling appStop is the only way to exit an application

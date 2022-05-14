@@ -1,0 +1,8 @@
+LUA=.
+
+include $(LUA)/config.arm
+
+all clean:
+	cd src; $(MAKE) -f Makefile.arm $@
+	cd src/lib; $(MAKE) -f Makefile.arm $@
+	cd src/lua; $(MAKE) -f Makefile.arm $@

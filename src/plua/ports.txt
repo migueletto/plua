@@ -1,0 +1,17 @@
+Logical Serial Port Constants:
+
+serPortCradlePort: Cradle port. The Serial Manager automatically detects whether this port is USB or RS-232.
+
+serPortCradleRS232Port: Port for the RS-232 cradle. Specify this port if you want to ensure that your application uses RS-232 communications only.
+
+serPortCradleUSBPort: Port for the USB cradle. Specify this port if you want to ensure that your application uses USB communications only.
+
+serPortIrPort: The IR port. This is a raw IrDA port with no protocol support.
+
+
+
+Virtual Serial Port Constants:
+
+sysFileCVirtIrComm: 'ircm' A virtual serial cable over an IrDA link using the IRComm protocol. It can only be used to talk to another IRComm device.
+
+sysFileCVirtRfComm: 'rfcm' RFCOMM (Bluetooth) virtual port plug-in.

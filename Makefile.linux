@@ -1,0 +1,10 @@
+LUA=.
+
+include $(LUA)/config.linux
+
+all clean:
+	cd src; $(MAKE) -f Makefile.linux $@
+	cd src/lib; $(MAKE) -f Makefile.linux $@
+	cd src/lua; $(MAKE) -f Makefile.linux $@
+	cd src/luac; $(MAKE) -f Makefile.linux $@
+	cd distrib/examples; $(MAKE) $@

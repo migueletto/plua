@@ -1,0 +1,21 @@
+HEX "MIDn" ID 1 "Bach" 0x00
+HEX "MIDn" ID 2 "Beethoven" 0x00
+
+DATA "MIDf" ID 1 "mid/bach.mid"
+DATA "MIDf" ID 2 "mid/beethoven.mid"
+
+HEX "WAVn" ID 1 "Boing" 0x00
+HEX "WAVn" ID 2 "Cymbal" 0x00
+HEX "WAVn" ID 3 "Glass" 0x00
+HEX "WAVn" ID 4 "Laser" 0x00
+HEX "WAVn" ID 5 "Pop" 0x00
+HEX "WAVn" ID 6 "Quack" 0x00
+HEX "WAVn" ID 7 "Whiz" 0x00
+
+DATA "WAVf" ID 1 "wav/boing.wav"
+DATA "WAVf" ID 2 "wav/cymbal.wav"
+DATA "WAVf" ID 3 "wav/glass.wav"
+DATA "WAVf" ID 4 "wav/laser.wav"
+DATA "WAVf" ID 5 "wav/pop.wav"
+DATA "WAVf" ID 6 "wav/quack.wav"
+DATA "WAVf" ID 7 "wav/whiz.wav"

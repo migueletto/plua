@@ -1,0 +1,10 @@
+coroutine.create(f): creates a new coroutine, with body f. f must be a Lua function. Returns this new coroutine, an object with type "thread".
+
+coroutine.resume(co,val1,...): starts or continues the execution of coroutine co. The first time you resume a coroutine, it starts running its body. The arguments val1, ... go as the arguments to the body function. If the coroutine has yielded, resume restarts it; the arguments val1, ... go as the results from the yield. If the coroutine runs without any errors, resume returns true plus any values passed to yield (if the coroutine yields) or any values returned by the body function (if the coroutine terminates). If there is any error, resume returns false plus the error message.
+
+coroutine.status(co): returns the status of coroutine co, as a string: "running", if the coroutine is running (that is, it called status); "suspended", if the coroutine is suspended in a call to yield, or if it has not started running yet; and "dead" if the coroutine has finished its body function, or if it has stopped with an error.
+
+coroutine.wrap(f): creates a new coroutine, with body f. f must be a Lua function. Returns a function that resumes the coroutine each time it is called. Any arguments passed to the function behave as the extra arguments to resume. Returns the same values returned by resume, except the first boolean. In case of error, propagates the error.
+
+coroutine.yield(val1,...): suspends the execution of the calling coroutine. The coroutine cannot be running neither a C function, nor a metamethod, nor an iterator. Any arguments to yield go as extra results to resume.
+

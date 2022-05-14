@@ -1,0 +1,59 @@
+assert(v[,message]): issues an error when the value of its argument v is nil or false; otherwise, returns this value. message is an error message; when absent, it defaults to "assertion failed!"
+
+collectgarbage([limit]): sets the garbage-collection threshold to the given limit (in Kbytes) and checks it against the byte counter. If the new threshold is smaller than the byte counter, then Lua immediately runs the garbage collector. If limit is absent, it defaults to zero (thus forcing a garbage-collection cycle).
+
+dofile(filename): opens the named file and executes its contents as a Lua chunk. When called without arguments, dofile executes the contents of the standard input (stdin). Returns any value returned by the chunk. In case of errors, dofile propagates the error to its caller (that is, it does not run in protected mode).
+
+error(message[,level]): terminates the last protected function called and returns message as the error message. Function error never returns. The level argument specifies where the error message points the error. With level 1 (the default), the error position is where the error function was called. Level 2 points the error to where the function that called error was called; and so on.
+
+_G: a global variable (not a function) that holds the global environment (that is, _G._G = _G). Lua itself does not use this variable; changing its value does not affect any environment. (Use setfenv to change environments.)
+
+getfenv(f): returns the current environment in use by the function. f can be a Lua function or a number, which specifies the function at that stack level: Level 1 is the function calling getfenv. If the given function is not a Lua function, or if f is 0, getfenv returns the global environment. The default for f is 1. If the environment has a "__fenv" field, returns the associated value, instead of the environment.
+
+getmetatable(object): if the object does not have a metatable, returns nil. Otherwise, if the object's metatable has a "__metatable" field, returns the associated value. Otherwise, returns the metatable of the given object.
+
+gcinfo(): returns two results: the number of Kbytes of dynamic memory that Lua is using and the current garbage collector threshold (also in Kbytes).
+
+ipairs(t): returns an iterator function, the table t, and 0, so that the construction  for i,v in ipairs(t) do ... end  will iterate over the pairs (1,t[1]), (2,t[2]), ..., up to the first integer key with a nil value in the table.
+
+loadfile(filename): loads a file as a Lua chunk (without running it). If there are no errors, returns the compiled chunk as a function; otherwise, returns nil plus the error message. The environment of the returned function is the global environment.
+
+#loadlib(libname,funcname): links the program with the dynamic C library libname. Inside this library, looks for a function funcname and returns this function as a C function. libname must be the complete file name of the C library, including any eventual path and extension. This function is not supported by ANSI C. As such, it is only available on some platforms (Windows, Linux, Solaris, BSD, plus other Unix systems that support the dlfcn standard).
+
+loadlib(libname,funcname): links the program with the dynamic C library libname. Inside this library, looks for a function funcname and returns this function as a C function. libname must be the name of the C library built with libkit.
+
+loadstring(string[,chunkname]): loads a string as a Lua chunk (without running it). If there are no errors, returns the compiled chunk as a function; otherwise, returns nil plus the error message. The environment of the returned function is the global environment. The optional parameter chunkname is the name to be used in error messages and debug information. To load and run a given string, use the idiom: assert(loadstring(s))()
+
+next(table[,index]): allows a program to traverse all fields of a table. Its first argument is a table and its second argument is an index in this table. next returns the next index of the table and the value associated with the index. When called with nil as its second argument, next returns the first index of the table and its associated value. When called with the last index, or with nil in an empty table, next returns nil. If the second argument is absent, then it is interpreted as nil. Lua has no declaration of fields; There is no difference between a field not present in a table or a field with value nil. Therefore, next only considers fields with non-nil values. The order in which the indices are enumerated is not specified, even for numeric indices. (To traverse a table in numeric order, use a numerical for or the ipairs function.) The behavior of next is undefined if, during the traversal, you assign any value to a non-existent field in the table.
+
+pairs(t): returns the next function and the table t (plus a nil), so that the construction  for k,v in pairs(t) do ... end  will iterate over all key-value pairs of table t.
+
+pcall(f,arg1,arg2,...): calls function f with the given arguments in protected mode. That means that any error inside f is not propagated; instead, pcall catches the error and returns a status code. Its first result is the status code (a boolean), which is true if the call succeeds without errors. In such case, pcall also returns all results from the call, after this first result. In case of any error, pcall returns false plus the error message.
+
+print(e1,e2,...): receives any number of arguments, and prints their values in stdout, using the tostring function to convert them to strings. This function is not intended for formatted output, but only as a quick way to show a value, typically for debugging. For formatted output, use format.
+
+rawequal(v1,v2): checks whether v1 is equal to v2, without invoking any metamethod. Returns a boolean.
+
+rawget(table,index): gets the real value of table[index], without invoking any metamethod. table must be a table; index is any value different from nil.
+
+rawset(table,index,value): sets the real value of table[index] to value, without invoking any metamethod. table must be a table, index is any value different from nil, and value is any Lua value.
+
+require(packagename): loads the given package. The function starts by looking into the table _LOADED to determine whether packagename is already loaded. If it is, then require returns the value that the package returned when it was first loaded. Otherwise, it searches for a file to load. The function stops the search as soon as it can load a file, and then it runs the file. After that, it associates, in table _LOADED, the package name with the value that the package returned, and returns that value. If the package returns nil (or no value), require converts this value to true. If the package returns false, require also returns false. However, as the mark in table _LOADED is false, any new attempt to reload the file will happen as if the package was not loaded (that is, the package will be loaded again). If there is any error loading or running the file, or if it cannot find any file, then require signals an error. While running a file, require defines the global variable _REQUIREDNAME with the package name. The package being loaded always runs within the global environment.
+
+setfenv(f,table): sets the current environment to be used by the given function. f can be a Lua function or a number, which specifies the function at that stack level: Level 1 is the function calling setfenv. As a special case, when f is 0 setfenv changes the global environment of the running thread. If the original environment has a "__fenv" field, setfenv raises an error.
+
+setmetatable(table,metatable): sets the metatable for the given table. (You cannot change the metatable of a userdata from Lua.) If metatable is nil, removes the metatable of the given table. If the original metatable has a "__metatable" field, raises an error.
+
+#tonumber(e[,base]): tries to convert its argument to a number. If the argument is already a number or a string convertible to a number, then tonumber returns that number; otherwise, it returns nil. An optional argument specifies the base to interpret the numeral. The base may be any integer between 2 and 36, inclusive. In bases above 10, the letter `A´ (in either upper or lower case) represents 10, `B´ represents 11, and so forth, with `Z´ representing 35. In base 10 (the default), the number may have a decimal part, as well as an optional exponent part. In other bases, only unsigned integers are accepted.
+
+tonumber(e): tries to convert its argument to a number in base 10. If the argument is already a number or a string convertible to a number, then tonumber returns that number; otherwise, it returns nil. The number may have a decimal part, as well as an optional exponent part.
+
+tostring(e): receives an argument of any type and converts it to a string in a reasonable format. For complete control of how numbers are converted, use format. If the metatable of e has a "__tostring" field, tostring calls the corresponding value with e as argument, and uses the result of the call as its result.
+
+type(v): returns the type of its only argument, coded as a string. The possible results of this function are "nil" (a string, not the value nil), "number", "string", "boolean, "table", "function", "thread", and "userdata".
+
+unpack(list): returns all elements from the given list. This function is equivalent to  return list[1], list[2], ..., list[n]  except that the above code can be written only for a fixed n. The number n is the size of the list, as defined for the table.getn function.
+
+_VERSION: a global variable (not a function) that holds a string containing the current interpreter version. The current content of this string is "Lua 5.0.3".
+
+xpcall(f,err): this function is similar to pcall, except that you can set a new error handler. xpcall calls function f in protected mode, using err as the error handler. Any error inside f is not propagated; instead, xpcall catches the error, calls the err function with the original error object, and returns a status code. Its first result is the status code (a boolean), which is true if the call succeeds without errors. In such case, xpcall also returns all results from the call, after this first result. In case of any error, xpcall returns false plus the result from err.

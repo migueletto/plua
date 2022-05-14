@@ -1,0 +1,17 @@
+#!/bin/sh
+
+. ../VERSION
+
+rm -f plua-${VERSION}.zip
+
+rm -f plua-${VERSION}.examples.zip
+
+rm -f examples/Aquario/*.bin
+rm -f examples/Demo/*.bin
+rm -f examples/Sound/*.bin
+cp ../src/plua/lib/3dlib2.prc examples/LuaCalc
+#cp ../src/plua/lib/ScreenLib.prc examples/ScreenTest
+
+zip -r plua-${VERSION}.examples.zip examples/Readme.txt examples/Aquario/* examples/LuaCalc/* examples/Demo/* examples/Sound/*
+
+exit 0

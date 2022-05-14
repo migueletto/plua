@@ -1,0 +1,7 @@
+r = resource.open("Tbmp", 1100, "Myfile")
+gui.event(1) -- if you don't insert this line it doesn't work
+resource.draw(r)
+
+
+> * trying to io.open() a file with accents in its name fails
+==> nao consegui reproduzir o erro

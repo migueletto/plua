@@ -1,0 +1,22 @@
+# The standard names of gcc/prc-tools binaries.
+
+CC       = m68k-palmos-gcc
+BUILDPRC = build-prc
+
+# You do not need to change anything below this point.
+
+CFLAGS   = -O2 -Wall -Wno-switch
+LDFLAGS  = -L. -e start -nostartfiles
+OBJS     = plualib.o plualib-dispatch.o
+LIBS     = -lnfm
+
+all: ScreenLib.prc
+
+ScreenLib.prc: ScreenLib.def ScreenLib 
+	$(BUILDPRC) -o ScreenLib.prc ScreenLib.def ScreenLib 
+
+ScreenLib: $(OBJS) ScreenLib.o
+	$(CC) $(CFLAGS) $(LDFLAGS) $(OBJS) ScreenLib.o $(LIBS) -o ScreenLib
+
+clean:
+	rm -f ScreenLib.o ScreenLib ScreenLib.prc

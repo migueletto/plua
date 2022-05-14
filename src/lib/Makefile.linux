@@ -1,0 +1,30 @@
+# makefile for Lua standard library
+
+LUA= ../..
+
+include $(LUA)/config.linux
+
+linux/%.o: %.c
+	$(CC) $(CFLAGS) -c $< -o $@
+
+EXTRA_DEFS= $(POPEN) $(TMPNAM) $(DEGREES) $(LOADLIB)
+
+OBJS= linux/lauxlib.o linux/lbaselib.o linux/ldblib.o linux/liolib.o linux/lmathlib.o linux/ltablib.o linux/lstrlib.o linux/loadlib.o linux/lbwlib.o linux/lpacklib.o
+SRCS= lauxlib.c lbaselib.c ldblib.c liolib.c lmathlib.c ltablib.c lstrlib.c loadlib.c lbwlib.c lpacklib.c
+
+T= $(LIB)/liblualib.a
+
+all:	$T
+
+$T:	$(OBJS)
+	$(AR) $@ $(OBJS)
+	$(RANLIB) $@
+
+clean:
+	rm -f $(OBJS) $T
+
+co:
+	co -q -f -M $(SRCS)
+
+klean:	clean
+	rm -f $(SRCS)

@@ -1,0 +1,17 @@
+CC        = m68k-palmos-gcc
+AS        = m68k-palmos-as
+
+CSFLAGS   = -O2 -S -Wall -Wno-switch
+CFLAGS    = -O2 -Wall -Wno-switch
+OBJS      = plualib.o plualib-dispatch.o
+
+all: $(OBJS)
+
+.s.o:
+	$(CC) $(TARGETFLAGS) -c $<
+
+.c.s:
+	$(CC) $(CSFLAGS) $<
+
+clean:
+	rm -f $(OBJS)

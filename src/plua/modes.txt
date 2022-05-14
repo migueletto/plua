@@ -1,0 +1,39 @@
+memo:
+db:
+r       dmModeReadOnly
+r+      dmModeReadWrite
+w       dmModeWrite
+Em todos os modos o ponteiro e inicializado com 0
+Tamanho do registro nao pode ser alterado
+Modo w nao cria registro de MemoPad se ele nao existir
+
+code:
+rsrc:
+doc:
+Plua library:
+r
+Ponteiro e inicializado com 0
+
+stream:
+r       fileModeReadOnly        open for read access
+r+      fileModeUpdate          open/create for read/write, preserving previous if any
+w       fileModeReadWrite       create for read/write access, discarding previous if any
+a       fileModeAppend          open/create for read/write, always writing at the end
+
+vfs:
+r       vfsModeRead
+r+      vfsModeReadWrite | vfsModeCreate
+w       vfsModeWrite | vfsModeCreate | vfsModeTruncate
+a       vfsModeWrite | vfsModeCreate
+
+vfsModeRead             open for read access
+vfsModeReadWrite        open for read/write access
+vfsModeWrite            open for write access, implies exclusive
+vfsModeCreate           create the file if it doesn't already exist
+vfsModeTruncate         truncate file to 0 bytes after opening, removing all existing data
+
+tcp:
+udp:
+srm:
+driver:
+Modo e ignorado

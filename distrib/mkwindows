@@ -1,0 +1,11 @@
+#!/bin/sh
+
+. ../VERSION
+
+rm -f pluac-${VERSION}.windows.zip
+
+cp ../bin/windows/plua2c.exe windows
+
+zip pluac-${VERSION}.windows.zip License.txt windows/plua2c.exe windows/Readme.txt
+
+exit 0

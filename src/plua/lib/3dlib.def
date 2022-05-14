@@ -1,0 +1,5 @@
+syslib { "3dlib2" 3dl2 } 
+
+export { 
+  PluaLibOpen PluaLibClose PluaLibSleep PluaLibWake PluaLibGet
+}

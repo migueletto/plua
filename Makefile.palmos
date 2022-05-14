@@ -1,0 +1,13 @@
+LUA=.
+
+include $(LUA)/config.palmos
+
+all clean:
+	cd src; $(MAKE) -f Makefile.palmos $@
+	cd src/lib; $(MAKE) -f Makefile.palmos $@
+	cd src/plua/client; $(MAKE) $@
+	cd src/plua; $(MAKE) $@
+	cd src/plua/rt; $(MAKE) $@
+	cd src/plua/help; $(MAKE) $@
+	cd src/plua/lib; $(MAKE) -f Makefile.lib $@
+	cd src/plua/lib; $(MAKE) $@

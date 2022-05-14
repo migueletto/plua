@@ -1,0 +1,140 @@
+#include "../../../include/plua/gui.h"
+
+FORM RuntimeForm 0 0 160 160
+USABLE
+NOFRAME
+BEGIN
+  TITLE "Plua2 RT"
+  LABEL "This is the runtime for applications" 3001 CENTER 20
+  LABEL "created with Plua." 3002 CENTER PREVBOTTOM+1
+  LABEL "For more information on Plua check:" 3003 CENTER PREVBOTTOM+10
+  LABEL "http://meusite.uai.com.br/" 3004 CENTER PREVBOTTOM+6 FONT 1
+  LABEL "~mmand/plua/plua.htm" 3005 CENTER PREVBOTTOM+1 FONT 1
+END
+
+MENU AppMenu
+BEGIN
+  PULLDOWN "Menu"
+  BEGIN
+    MENUITEM "About Plua"       AboutCmd
+  END
+  PULLDOWN "Edit"
+  BEGIN
+    MENUITEM "Undo"             UndoCmd         "U"
+    MENUITEM "Cut"              CutCmd          "X"
+    MENUITEM "Copy"             CopyCmd         "C"
+    MENUITEM "Paste"            PasteCmd        "P"
+    MENUITEM "Select All"       SelectCmd       "S"
+    MENUITEM "-"                0
+    MENUITEM "Keyboard"         KeyboardCmd     "K"
+    MENUITEM "Graffiti Help"    GraffitiCmd     "G"
+  END
+END
+
+FORM GraphicForm 0 0 160 160
+USABLE
+NOFRAME
+MENUID AppMenu
+BEGIN
+  TITLE ""
+  SCROLLBAR graphicScl  0 0 7 44 NONUSABLE
+  SCROLLBAR graphicScl2 0 0 7 44 NONUSABLE
+  SCROLLBAR graphicScl3 0 0 7 44 NONUSABLE
+  SCROLLBAR graphicScl4 0 0 7 44 NONUSABLE
+END
+
+FORM FullGraphicForm 0 0 160 160
+USABLE
+NOFRAME
+MENUID AppMenu
+BEGIN
+  SCROLLBAR graphicScl  0 0 7 44 NONUSABLE
+  SCROLLBAR graphicScl2 0 0 7 44 NONUSABLE
+  SCROLLBAR graphicScl3 0 0 7 44 NONUSABLE
+  SCROLLBAR graphicScl4 0 0 7 44 NONUSABLE
+END
+
+FORM DialogForm 40 40 80 80
+USABLE
+MODAL
+BEGIN
+  TITLE ""
+  SCROLLBAR graphicScl  0 0 7 44 NONUSABLE
+  SCROLLBAR graphicScl2 0 0 7 44 NONUSABLE
+  SCROLLBAR graphicScl3 0 0 7 44 NONUSABLE
+  SCROLLBAR graphicScl4 0 0 7 44 NONUSABLE
+END
+
+FORM AboutForm 2 34 156 124
+USABLE
+MODAL
+SAVEBEHIND
+DEFAULTBTNID okBtn
+BEGIN
+  TITLE "About Plua RT"
+  LABEL "Plua RT @@VERSION@@" 3001 CENTER 16 FONT 2
+  LABEL "M\341rcio Migueletto de Andrade" 3003 CENTER PREVBOTTOM+10 FONT 1
+  LABEL "mmand@uai.com.br" 3004 CENTER PREVBOTTOM+1 FONT 1
+  LABEL "http://meusite.uai.com.br/" 3005 CENTER PREVBOTTOM+6 FONT 1
+  LABEL "~mmand/plua/plua.htm" 3006 CENTER PREVBOTTOM+1 FONT 1
+  BUTTON "Ok" okBtn CENTER PREVBOTTOM+9 AUTO AUTO
+END
+
+FORM InputForm 2 107 156 51
+USABLE
+MODAL
+SAVEBEHIND
+DEFAULTBTNID okBtn
+BEGIN
+  TITLE "Input"
+  FIELD inputFld 4 16 146 11 UNDERLINED SINGLELINE USABLE MAXCHARS 255
+  BUTTON "Ok" okBtn 4 PREVBOTTOM+8 AUTO AUTO
+  BUTTON "Cancel" cancelBtn PREVRIGHT+6 PREVTOP AUTO AUTO
+  GRAFFITISTATEINDICATOR 136 37 
+END
+
+ALERT ErrorAlert
+ERROR
+BEGIN
+  TITLE "Error"
+  MESSAGE "^1 ^2 ^3"
+  BUTTONS "Ok"
+END
+
+ALERT InfoAlert
+INFORMATION
+BEGIN
+  TITLE "Information"
+  MESSAGE "^1 ^2 ^3"
+  BUTTONS "Ok"
+END
+
+ALERT ConfirmAlert
+CONFIRMATION
+BEGIN
+  TITLE "Confirmation"
+  MESSAGE "^1 ^2 ^3"
+  BUTTONS "Yes" "No"
+END
+
+FONT ID FixedFontLow FONTID 255 "../5x11.txt"
+
+FONTFAMILY ID FixedFontHigh FONTID 255
+BEGIN
+  FONT "../4x7.txt" DENSITY 72
+  FONT "../8x14.txt" DENSITY 144
+END
+
+VERSION "@@VERSION@@"
+
+ICON
+BEGIN
+  BITMAP "../icon32x32.bmp" BPP 8 DENSITY 72 TRANSPARENT 255 255 255
+  BITMAP "../icon64x64.bmp" BPP 8 DENSITY 144 TRANSPARENT 255 255 255
+END
+
+SMALLICON
+BEGIN
+  BITMAP "../icon15x9.bmp" BPP 8 DENSITY 72 TRANSPARENT 255 255 255
+  BITMAP "../icon30x21.bmp" BPP 8 DENSITY 144 TRANSPARENT 255 255 255
+END

@@ -1,0 +1,24 @@
+string.byte(s[,i]): returns the internal numerical code of the i-th character of s, or nil if the index is out of range. If i is absent, then it is assumed to be 1. i may be negative. Note that numerical codes are not necessarily portable across platforms.
+
+string.char(i1,i2,...): receives 0 or more integers. Returns a string with length equal to the number of arguments, in which each character has the internal numerical code equal to its correspondent argument. Note that numerical codes are not necessarily portable across platforms.
+
+string.dump(function): returns a binary representation of the given function, so that a later loadstring on that string returns a copy of the function. function must be a Lua function without upvalues.
+
+string.find(s,pattern[,init[,plain]]): looks for the first match of pattern in the string s. If it finds one, then find returns the indices of s where this occurrence starts and ends; otherwise, it returns nil. If the pattern specifies captures (see string.gsub), the captured strings are returned as extra results. A third, optional numerical argument init specifies where to start the search; it may be negative and its default value is 1. A value of true as a fourth, optional argument plain turns off the pattern matching facilities, so the function does a plain "find substring" operation, with no characters in pattern being considered "magic". Note that if plain is given, then init must be given too.
+
+string.len(s): receives a string and returns its length. The empty string "" has length 0. Embedded zeros are counted, so "a\000b\000c" has length 5.
+
+string.lower(s): receives a string and returns a copy of that string with all uppercase letters changed to lowercase. All other characters are left unchanged. The definition of what is an uppercase letter depends on the current locale.
+
+string.rep(s,n): returns a string that is the concatenation of n copies of the string s.
+
+string.sub(s,i[,j]): returns the substring of s that starts at i and continues until j; i and j may be negative. If j is absent, then it is assumed to be equal to -1 (which is the same as the string length). In particular, the call string.sub(s,1,j) returns a prefix of s with length j, and string.sub(s, -i) returns a suffix of s with length i.
+
+string.upper(s): receives a string and returns a copy of that string with all lowercase letters changed to uppercase. All other characters are left unchanged. The definition of what is a lowercase letter depends on the current locale.
+
+string.format(formatstring,e1,e2,...): returns a formatted version of its variable number of arguments following the description given in its first argument (which must be a string). The format string follows the same rules as the printf family of standard C functions. The only differences are that the options/modifiers *, l, L, n, p, and h are not supported, and there is an extra option, q. The q option formats a string in a form suitable to be safely read back by the Lua interpreter: The string is written between double quotes, and all double quotes, newlines, and backslashes in the string are correctly escaped when written.
+
+string.gfind(s,pat): returns an iterator function that, each time it is called, returns the next captures from pattern pat over string s. If pat specifies no captures, then the whole match is produced in each call.
+
+string.gsub(s,pat,repl[,n]): returns a copy of s in which all occurrences of the pattern pat have been replaced by a replacement string specified by repl. gsub also returns, as a second value, the total number of substitutions made. If repl is a string, then its value is used for replacement. Any sequence in repl of the form %n, with n between 1 and 9, stands for the value of the n-th captured substring. If repl is a function, then this function is called every time a match occurs, with all captured substrings passed as arguments, in order; if the pattern specifies no captures, then the whole match is passed as a sole argument. If the value returned by this function is a string, then it is used as the replacement string; otherwise, the replacement string is the empty string. The optional last parameter n limits the maximum number of substitutions to occur. For instance, when n is 1 only the first occurrence of pat is replaced.
+

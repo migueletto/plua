@@ -1,0 +1,349 @@
+#include "../../include/plua/gui.h"
+
+FORM TextForm 0 0 160 160
+USABLE
+NOFRAME
+MENUID MainMenu
+BEGIN
+  TITLE "Plua2"
+  FIELD sourceFld 0 96 152 44 UNDERLINED MULTIPLELINE USABLE MAXCHARS 1023 HASSCROLLBAR
+  SCROLLBAR sourceScl PREVRIGHT PREVTOP+5 7 44
+  BUTTON "Clear" clearBtn 1 PREVBOTTOM+2 AUTO AUTO
+  BUTTON "Run" runBtn PREVRIGHT+4 PREVTOP AUTO AUTO
+  BUTTON "File" fileBtn PREVRIGHT+4 PREVTOP AUTO AUTO
+  GRAFFITISTATEINDICATOR 152 148
+  SCROLLBAR graphicScl  0 0 7 44 NONUSABLE
+  SCROLLBAR graphicScl2 0 0 7 44 NONUSABLE
+  SCROLLBAR graphicScl3 0 0 7 44 NONUSABLE
+  SCROLLBAR graphicScl4 0 0 7 44 NONUSABLE
+END
+
+FORM EditForm 0 0 160 160
+USABLE
+NOFRAME
+MENUID FieldEditMenu
+DEFAULTBTNID okBtn
+BEGIN
+  TITLE "Editor"
+  FIELD sourceFld 0 16 152 121 MULTIPLELINE USABLE FONT 255 MAXCHARS 16 HASSCROLLBAR
+  SCROLLBAR sourceScl PREVRIGHT PREVTOP+5 7 121
+  BUTTON "Done" okBtn 1 PREVBOTTOM+5 AUTO AUTO
+  GRAFFITISTATEINDICATOR 140 148
+END
+
+MENU MainMenu
+BEGIN
+  PULLDOWN "Options"
+  BEGIN
+    MENUITEM "Preferences..."	PrefsCmd	"R"
+    MENUITEM "About Plua"	AboutCmd
+  END
+  PULLDOWN "Edit"
+  BEGIN
+    MENUITEM "Undo"		UndoCmd		"U"
+    MENUITEM "Cut"		CutCmd		"X"
+    MENUITEM "Copy"		CopyCmd		"C"
+    MENUITEM "Paste"		PasteCmd	"P"
+    MENUITEM "Select All"	SelectCmd	"S"
+    MENUITEM "-"		0
+    MENUITEM "Keyboard"		KeyboardCmd	"K"
+    MENUITEM "Graffiti Help"	GraffitiCmd	"G"
+  END
+END
+
+MENU FieldEditMenu
+BEGIN
+  PULLDOWN "Edit"
+  BEGIN
+    MENUITEM "Undo"		UndoCmd		"U"
+    MENUITEM "Cut"		CutCmd		"X"
+    MENUITEM "Copy"		CopyCmd		"C"
+    MENUITEM "Paste"		PasteCmd	"P"
+    MENUITEM "Select All"	SelectCmd	"S"
+    MENUITEM "-"		0
+    MENUITEM "Keyboard"		KeyboardCmd	"K"
+    MENUITEM "Graffiti Help"	GraffitiCmd	"G"
+  END
+END
+
+MENU AppMenu
+BEGIN
+  PULLDOWN "Menu"
+  BEGIN
+    MENUITEM "About Plua"	AboutCmd
+  END
+  PULLDOWN "Edit"
+  BEGIN
+    MENUITEM "Undo"		UndoCmd		"U"
+    MENUITEM "Cut"		CutCmd		"X"
+    MENUITEM "Copy"		CopyCmd		"C"
+    MENUITEM "Paste"		PasteCmd	"P"
+    MENUITEM "Select All"	SelectCmd	"S"
+    MENUITEM "-"		0
+    MENUITEM "Keyboard"		KeyboardCmd	"K"
+    MENUITEM "Graffiti Help"	GraffitiCmd	"G"
+  END
+END
+
+FORM MemoForm 0 0 160 160
+USABLE
+NOFRAME
+DEFAULTBTNID cancelBtn
+BEGIN
+  TITLE "Memos"
+
+  POPUPTRIGGER "Memo" chooseCtl 110 0 AUTO AUTO LEFTANCHOR
+  LIST "" chooseList PREVLEFT+4 PREVTOP 40 AUTO VISIBLEITEMS 1 NONUSABLE
+  POPUPLIST chooseCtl chooseList
+
+  LIST "" fileList 1 19 158 AUTO VISIBLEITEMS 11
+  BUTTON "Run" okBtn 1 PREVBOTTOM+7 20 AUTO
+  BUTTON "Compile" compileBtn PREVRIGHT+4 PREVTOP 40 AUTO
+  BUTTON "New" newBtn PREVRIGHT+4 PREVTOP 22 AUTO
+  BUTTON "Edit" editBtn PREVRIGHT+4 PREVTOP 24 AUTO
+  BUTTON "Main" cancelBtn PREVRIGHT+4 PREVTOP 28 AUTO
+END
+
+FORM DocForm 0 0 160 160
+USABLE
+NOFRAME
+DEFAULTBTNID cancelBtn
+BEGIN
+  TITLE "Docs"
+
+  POPUPTRIGGER "Doc" chooseCtl 110 0 AUTO AUTO LEFTANCHOR
+  LIST "" chooseList PREVLEFT+4 PREVTOP 40 AUTO VISIBLEITEMS 1 NONUSABLE
+  POPUPLIST chooseCtl chooseList
+
+  LIST "" fileList 1 19 158 AUTO VISIBLEITEMS 11
+  BUTTON "Run" okBtn 1 PREVBOTTOM+7 20 AUTO
+  BUTTON "Compile" compileBtn PREVRIGHT+4 PREVTOP 40 AUTO
+  BUTTON "Edit" editBtn PREVRIGHT+4 PREVTOP 24 AUTO
+  BUTTON "Main" cancelBtn PREVRIGHT+4 PREVTOP 28 AUTO
+END
+
+FORM StreamForm 0 0 160 160
+USABLE
+NOFRAME
+DEFAULTBTNID cancelBtn
+BEGIN
+  TITLE "Streams"
+
+  POPUPTRIGGER "Stream" chooseCtl 110 0 AUTO AUTO LEFTANCHOR
+  LIST "" chooseList PREVLEFT+4 PREVTOP 40 AUTO VISIBLEITEMS 1 NONUSABLE
+  POPUPLIST chooseCtl chooseList
+  
+  LIST "" fileList 1 19 158 AUTO VISIBLEITEMS 11
+  BUTTON "Run" okBtn 1 PREVBOTTOM+7 20 AUTO
+  BUTTON "Compile" compileBtn PREVRIGHT+4 PREVTOP 40 AUTO
+  BUTTON "Main" cancelBtn PREVRIGHT+4 PREVTOP 28 AUTO
+END
+
+FORM VfsForm 0 0 160 160
+USABLE
+NOFRAME
+DEFAULTBTNID cancelBtn
+BEGIN
+  TITLE "Card"
+
+  POPUPTRIGGER "Card" chooseCtl 110 0 AUTO AUTO LEFTANCHOR
+  LIST "" chooseList PREVLEFT+4 PREVTOP 40 AUTO VISIBLEITEMS 1 NONUSABLE
+  POPUPLIST chooseCtl chooseList
+
+  LIST "" fileList 1 19 158 AUTO VISIBLEITEMS 11
+  BUTTON "Run" okBtn 1 PREVBOTTOM+7 20 AUTO
+  BUTTON "Compile" compileBtn PREVRIGHT+4 PREVTOP 40 AUTO
+  BUTTON "Main" cancelBtn PREVRIGHT+4 PREVTOP 28 AUTO
+END
+
+FORM GraphicForm 0 0 160 160
+USABLE
+NOFRAME
+MENUID AppMenu
+BEGIN
+  TITLE ""
+  SCROLLBAR graphicScl  0 0 7 44 NONUSABLE
+  SCROLLBAR graphicScl2 0 0 7 44 NONUSABLE
+  SCROLLBAR graphicScl3 0 0 7 44 NONUSABLE
+  SCROLLBAR graphicScl4 0 0 7 44 NONUSABLE
+END
+
+FORM FullGraphicForm 0 0 160 160
+USABLE
+NOFRAME
+MENUID AppMenu
+BEGIN
+  SCROLLBAR graphicScl  0 0 7 44 NONUSABLE
+  SCROLLBAR graphicScl2 0 0 7 44 NONUSABLE
+  SCROLLBAR graphicScl3 0 0 7 44 NONUSABLE
+  SCROLLBAR graphicScl4 0 0 7 44 NONUSABLE
+END
+
+FORM DialogForm 40 40 80 80
+USABLE
+MODAL
+BEGIN
+  TITLE ""
+  SCROLLBAR graphicScl  0 0 7 44 NONUSABLE
+  SCROLLBAR graphicScl2 0 0 7 44 NONUSABLE
+  SCROLLBAR graphicScl3 0 0 7 44 NONUSABLE
+  SCROLLBAR graphicScl4 0 0 7 44 NONUSABLE
+END
+
+FORM PrefsForm 2 92 156 66
+USABLE
+MODAL
+SAVEBEHIND
+DEFAULTBTNID cancelBtn
+HELPID PrefsForm
+BEGIN
+  TITLE "Plua Preferences"
+  CHECKBOX "Read-only mode" readOnlyCtl 4 16 AUTO AUTO FONT 1
+  CHECKBOX "Clear output" clearOutputCtl PREVLEFT PREVBOTTOM+2 AUTO AUTO FONT 1
+  BUTTON "Done" okBtn 4 PREVBOTTOM+8 AUTO AUTO
+END
+
+STRING PrefsForm "\x95 If Read-only mode is checked, all attempts to open a " \
+                 "database for writing or to remove a database will be " \
+                 "aborted, and an error message will be displayed.\n\n" \
+                 "\x95 If Clear output is checked, the Clear button will " \
+                 "also clear the output area and reset font and color values."
+
+FORM CompileForm 2 50 156 108
+USABLE
+MODAL
+SAVEBEHIND
+DEFAULTBTNID cancelBtn
+MENUID FieldEditMenu
+HELPID CompileForm
+BEGIN
+  TITLE "New PRC information"
+  LABEL "PRC type: " 3001 9 16 FONT 1
+  PUSHBUTTON "App" appSel PREVRIGHT+5 PREVTOP AUTO AUTO GROUP 1
+  PUSHBUTTON "Lib" libSel PREVRIGHT+1 PREVTOP AUTO AUTO GROUP 1
+  LABEL "Creator ID: " 3002 4 PREVBOTTOM+4 FONT 1
+  FIELD creatorFld PREVRIGHT+5 PREVTOP 32 AUTO EDITABLE SINGLELINE UNDERLINED MAXCHARS 4
+  LABEL "Name: " 3003 27 PREVBOTTOM+1 FONT 1
+  FIELD nameFld PREVRIGHT+5 PREVTOP 80 AUTO EDITABLE SINGLELINE UNDERLINED MAXCHARS 31
+  LABEL "Version: " 3004 17 PREVBOTTOM+1 FONT 1
+  FIELD versionFld PREVRIGHT+5 PREVTOP 32 AUTO EDITABLE SINGLELINE UNDERLINED MAXCHARS 5
+  CHECKBOX "No title" noTitleCtl 4 PREVBOTTOM+2 AUTO AUTO FONT 1
+
+  BUTTON "Ok" okBtn 4 PREVBOTTOM+8 AUTO AUTO
+  BUTTON "Cancel" cancelBtn PREVRIGHT+6 PREVTOP AUTO AUTO
+  LABEL "Wait ..." waitLbl PREVRIGHT+20 PREVTOP FONT 1
+  GRAFFITISTATEINDICATOR 136 PREVTOP
+END
+
+STRING CompileForm "\x95 Choosing App for the PRC type will create a " \
+                   "complete application. Choosing Lib will create a PRC " \
+                   "containing just the Lua code, ideal for using with " \
+                   "dofile().\n\n" \
+                   "\x95 The Creator ID must be 4 characters long. If you " \
+                   "intend to distribute the compiled PRC, first " \
+                   "register the ID with Palm.\n\n" \
+                   "\x95 The resulting PRC will have the specified name. The " \
+                   "name is also shown as the application's icon text, if " \
+                   "the PRC type is App.\n\n" \
+                   "\x95 The version string will be added to the PRC as a " \
+                   "version resouce.\n\n" \
+                   "\x95 If no title is checked, the compiled application " \
+                   "will not have a title frame in the main form."
+
+FORM AboutForm 2 66 156 92
+USABLE
+MODAL
+SAVEBEHIND
+DEFAULTBTNID okBtn
+BEGIN
+  TITLE "About Plua"
+  LABEL "Plua @@VERSION@@" 3001 CENTER 16 FONT 2
+  LABEL "M\341rcio Migueletto de Andrade" 3002 CENTER PREVBOTTOM+10 FONT 1
+  LABEL "migueletto@yahoo.com" 3003 CENTER PREVBOTTOM+1 FONT 1
+  BUTTON "Ok" okBtn CENTER PREVBOTTOM+9 AUTO AUTO
+END
+
+FORM InputForm 2 107 156 51
+USABLE
+MODAL
+SAVEBEHIND
+DEFAULTBTNID okBtn
+BEGIN
+  TITLE "Input"
+  FIELD inputFld 4 16 146 11 UNDERLINED SINGLELINE USABLE MAXCHARS 255
+  BUTTON "Ok" okBtn 4 PREVBOTTOM+8 AUTO AUTO
+  BUTTON "Cancel" cancelBtn PREVRIGHT+6 PREVTOP AUTO AUTO
+  GRAFFITISTATEINDICATOR 136 37
+END
+
+FORM HelpForm 2 30 156 128
+USABLE
+MODAL
+SAVEBEHIND
+DEFAULTBTNID okBtn
+BEGIN
+  TITLE "Help"
+  FIELD helpFld 4 16 142 88 EDITABLE MULTIPLELINE USABLE MAXCHARS 2048 HASSCROLLBAR
+  SCROLLBAR helpScl PREVRIGHT PREVTOP 7 88
+  BUTTON "Done" okBtn 4 PREVBOTTOM+8 AUTO AUTO
+  BUTTON "Goto" gotoBtn PREVRIGHT+6 PREVTOP AUTO AUTO
+  BUTTON "Index" indexBtn PREVRIGHT+6 PREVTOP AUTO AUTO
+END
+
+ALERT ErrorAlert
+ERROR
+BEGIN
+  TITLE "Error"
+  MESSAGE "^1 ^2 ^3"
+  BUTTONS "Ok"
+END
+
+ALERT InfoAlert
+INFORMATION
+BEGIN
+  TITLE "Information"
+  MESSAGE "^1 ^2 ^3"
+  BUTTONS "Ok"
+END
+
+ALERT ErrorGotoAlert
+ERROR
+BEGIN
+  TITLE "Error"
+  MESSAGE "^1 ^2 ^3"
+  BUTTONS "Ok" "Goto"
+END
+
+ALERT ConfirmAlert
+CONFIRMATION
+BEGIN
+  TITLE "Confirmation"
+  MESSAGE "^1 ^2 ^3"
+  BUTTONS "Yes" "No"
+END
+
+FONT ID FixedFontLow FONTID 255 "5x11.txt"
+
+FONTFAMILY ID FixedFontHigh FONTID 255
+BEGIN
+  FONT "4x7.txt" DENSITY 72
+  FONT "8x14.txt" DENSITY 144
+END
+
+VERSION "@@VERSION@@"
+
+DATA "Exec" ID 5001 "client/client.prc"
+DATA "Icon" ID 5001 "client/Tbmp1389.bin"
+DATA "Icon" ID 5002 "client/Tbmp138a.bin"
+
+ICON
+BEGIN
+  BITMAP "icon32x32.bmp" BPP 8 DENSITY 72 TRANSPARENT 255 255 255
+  BITMAP "icon64x64.bmp" BPP 8 DENSITY 144 TRANSPARENT 255 255 255
+END
+
+SMALLICON
+BEGIN
+  BITMAP "icon15x9.bmp" BPP 8 DENSITY 72 TRANSPARENT 255 255 255
+  BITMAP "icon30x21.bmp" BPP 8 DENSITY 144 TRANSPARENT 255 255 255
+END

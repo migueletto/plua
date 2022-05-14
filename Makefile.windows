@@ -1,0 +1,8 @@
+LUA=.
+
+include $(LUA)/config.windows
+
+all clean:
+	cd src; $(MAKE) -f Makefile.windows $@
+	cd src/lib; $(MAKE) -f Makefile.windows $@
+	cd src/luac; $(MAKE) -f Makefile.windows $@

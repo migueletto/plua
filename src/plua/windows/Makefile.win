@@ -1,0 +1,41 @@
+# Project: PluaRT
+# Makefile created by Dev-C++ 4.9.9.0
+
+CPP  = g++.exe
+CC   = gcc.exe
+WINDRES = windres.exe
+RES  = 
+OBJ  = ../windows/main.o ../windows/lbwlib.o ../windows/lpacklib.o ../windows/compat.o ../windows/lgraphlib.o $(RES)
+LINKOBJ  = ../windows/main.o ../windows/lbwlib.o ../windows/lpacklib.o ../windows/compat.o ../windows/lgraphlib.o $(RES)
+LIBS =  -L"C:/ARQUIVOS DE PROGRAMAS/DEV-CPP/lib" -mwindows ../../../lib/windows/liblua.a ../../../lib/windows/liblualib.a "C:/Arquivos de programas/Dev-Cpp/lib/libcomctl32.a"  
+INCS =  -I"C:/ARQUIVOS DE PROGRAMAS/DEV-CPP/include"  -I"H:/work/palm/src/lua5/include"  -I"H:/work/palm/src/lua5/include/windows"  -I"H:/work/palm/src/lua5/src/plua/pluac"  -I"H:/work/palm/src/lua5/src" 
+CXXINCS =  -I"C:/ARQUIVOS DE PROGRAMAS/DEV-CPP/include/c++/3.3.1"  -I"C:/ARQUIVOS DE PROGRAMAS/DEV-CPP/include/c++/3.3.1/mingw32"  -I"C:/ARQUIVOS DE PROGRAMAS/DEV-CPP/include/c++/3.3.1/backward"  -I"C:/ARQUIVOS DE PROGRAMAS/DEV-CPP/lib/gcc-lib/mingw32/3.3.1/include"  -I"C:/ARQUIVOS DE PROGRAMAS/DEV-CPP/include"  -I"H:/work/palm/src/lua5/include"  -I"H:/work/palm/src/lua5/include/windows"  -I"H:/work/palm/src/lua5/src/plua/pluac"  -I"H:/work/palm/src/lua5/src" 
+BIN  = PluaRT.exe
+CXXFLAGS = $(CXXINCS)  
+CFLAGS = $(INCS) -DWINDOWS -DLUA5  
+
+.PHONY: all all-before all-after clean clean-custom
+
+all: all-before PluaRT.exe all-after
+
+
+clean: clean-custom
+	rm -f $(OBJ) $(BIN)
+
+$(BIN): $(OBJ)
+	$(CC) $(LINKOBJ) -o "PluaRT.exe" $(LIBS)
+
+../windows/main.o: main.c
+	$(CC) -c main.c -o ../windows/main.o $(CFLAGS)
+
+../windows/lbwlib.o: ../lbwlib.c
+	$(CC) -c ../lbwlib.c -o ../windows/lbwlib.o $(CFLAGS)
+
+../windows/lpacklib.o: ../lpacklib.c
+	$(CC) -c ../lpacklib.c -o ../windows/lpacklib.o $(CFLAGS)
+
+../windows/compat.o: ../compat.c
+	$(CC) -c ../compat.c -o ../windows/compat.o $(CFLAGS)
+
+../windows/lgraphlib.o: lgraphlib.c
+	$(CC) -c lgraphlib.c -o ../windows/lgraphlib.o $(CFLAGS)

@@ -1,0 +1,15 @@
+LUA = ../..
+include $(LUA)/config.linux
+
+OBJS = linux/md5_one.o linux/md5_dgst.o
+
+all: linux/md5
+
+linux/%.o: %.c
+	$(CC) $(CFLAGS) -c $< -o $@
+
+linux/md5: $(OBJS)
+	$(CC) -o $@ $(OBJS)
+
+clean:
+	rm -f $(OBJS) linux/md5

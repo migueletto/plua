@@ -1,0 +1,48 @@
+# makefile for Lua compiler
+
+LUA= ../..
+
+include $(LUA)/config.win32
+
+INCS= $(INC) $(EXTRA_INCS)
+OBJS= windows/luac.o windows/print.o windows/lopcodes.o
+POBJS= windows/pluac.o windows/pdb.o windows/print.o windows/lopcodes.o
+
+T= $(BIN)/luac
+PT= $(BIN)/plua2c
+
+B2C=bin2c
+PILOTFILE=par x
+
+windows/%.o: %.c
+	$(CC) $(CFLAGS) -c $< -o $@
+
+all:	$(T) $(PT)
+
+$(T):	$(OBJS) $(LIB)/liblua.a $(LIB)/liblualib.a
+	$(CC) -o $@ $(MYLDFLAGS) $(OBJS) -L$(LIB) -llua -llualib $(EXTRA_LIBS) $(DLLIB)
+	$(STRIP) $@.exe
+
+$(PT):	resources.h $(POBJS) $(LIB)/liblua.a $(LIB)/liblualib.a
+	$(CC) -static -o $@ $(MYLDFLAGS) $(POBJS) -L$(LIB) -llua -llualib $(EXTRA_LIBS) $(DLLIB)
+	$(STRIP) $@.exe
+
+# print.c needs opcode names from lopcodes.c
+windows/lopcodes.o:	../lopcodes.c ../lopcodes.h
+	$(CC) -o $@ -c $(CFLAGS) -DLUA_OPNAMES ../lopcodes.c
+
+resources.h: $(B2C) ../plua/client/client.prc ../plua/client/Tbmp1389.bin ../plua/tver0001.bin
+	$(PILOTFILE) ../plua/client/client.prc > /dev/null
+	./$(B2C) PluaVersion < ../plua/tver0001.bin > resources.h
+	./$(B2C) code0000 < code0000.bin >> resources.h
+	./$(B2C) code0001 < code0001.bin >> resources.h
+	./$(B2C) data0000 < data0000.bin >> resources.h
+	./$(B2C) pref0000 < pref0000.bin >> resources.h
+	./$(B2C) tAIB03e8 < ../plua/client/Tbmp1389.bin >> resources.h
+	./$(B2C) tAIB03e9 < ../plua/client/Tbmp138a.bin >> resources.h
+
+$(B2C): $(B2C).c
+	$(CC) -o $@ $<
+
+clean:
+	rm -f $(OBJS) $(T).exe $(POBJS) $(PT).exe $(B2C).exe resources.h *.bin

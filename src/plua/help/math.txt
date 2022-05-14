@@ -1,0 +1,25 @@
+math.abs(n): returns the absolute value of n.
+math.asin(n): returns the angle (in degrees) of sine n.
+math.acos(n): returns the angle (in degrees) of cosine n.
+math.atan(n): returns the angle (in degrees) of tangent n.
+math.atan2(n1,n2): returns the angle (in degrees) corresponding to tangent n1/n2.
+math.ceil(n): returns n rounded to the ceiling.
+math.sin(n): returns the sine of n (n in degrees).
+math.cos(n): returns the cosine of n (n in degrees).
+math.tan(n): returns the tangent of n (n in degrees).
+math.floor(n): returns n rounded to the floor.
+math.mod(n1,n2): returns n1 modulo n2.
+math.frexp(n): converts n to a normalized number and an exponent (in powers of 2), returning these two numbers.
+math.ldexp(n1,n2): returns n1 * 2 ^ n2.
+math.sqrt(n): returns the square root of n.
+math.min(n1,n2,...): returns the minumum of a sequence of numbers.
+math.max(n1,n2,...): returns the maximum of a sequence of numbers.
+math.log(n): returns the natural logarithm of n.
+math.log10(n): returns the decimal logarithm of n.
+math.exp(n): returns e ^ n.
+math.deg(n): returns n converted to degrees.
+math.rad(n): returns n converted to radians.
+math.random([n1[,n2]]): returns a random number. If no arguments are passed, the number is between 0 and 1. If only one argument is passed, the number is between 1 and n1. If two arguments are passed, the number is between n1 and n2.
+math.randomseed(n): initializes the random number generator with the seed n.
+math.pow(n1,n2): returns n1 ^ n2.
+

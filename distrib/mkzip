@@ -1,0 +1,22 @@
+#!/bin/sh
+
+. ../VERSION
+
+rm -f plua-${VERSION}.zip
+
+KIT="Makefile Plua.h PluaAPI.h gadget.h TestLib.c TestLib.def 3dlib.c 3dlib.def libnfm.a plualib-dispatch.o plualib.o"
+
+rm -f libkit/*
+
+for f in $KIT
+do
+  cp ../src/plua/lib/$f libkit
+done
+
+cp ../bin/palmos/plua2.prc prc
+cp ../bin/palmos/plua2rt.prc prc
+cp ../bin/palmos/plua2help.prc prc
+
+zip -r plua-${VERSION}.zip Readme.txt License.txt prc/* doc/* libkit/*
+
+exit 0

@@ -1,0 +1,224 @@
+os.listdb(creator,type[,suffix]): returns a table with all databases matching the specified type and creator, and optional suffix. Type and creator are either a 4 character string or an empty string to accept anything.
+
+f:getdbcat(n): returns the name of category n (where 0 <= n <= 15) from already open database f.
+
+f:setdbcat(n,cat): sets the name of category n (where 0 <= n <= 15) to "cat" on already open database f. Returns the category name just set.
+
+f:openrec(i): opens the record with index i from an already open database f. If i is negative, the database AppInfo record is opened. Returns the size of the record or nil if an error occurred.
+
+f:createrec(size): creates a new record with given size in (already open) database f. The record is added at the end of the database. The created record is NOT automatically opened, so it is necessary to call openrec() to open the just created record before using it. Returns the index of the new record or nil if an error ocurred.
+
+f:deleterec(i): deletes the record with index i from (already open) database f. The record can not be open when it is deleted. Returns true if success or nil if an error occurred.
+
+f:removerec(i): removes the record with index i from (already open) database f. The record can not be open when it is removed. Returns true if success or nil if an error occurred.
+
+f:closerec(): closes the current open record of (already open) database f. Returns true if success or nil if an error occurred.
+
+f:resizerec(i,size): resizes the record with index i from (already open) database f to the specified size. If the record beeing resized is the currently open record, it is closed, resized and then reopened. Returns true if success or nil if an error occurred.
+
+f:getreccat(i): returns the category number for record index i from already open database f.
+
+f:setreccat(i,n): sets the category number to n for record index i on already open database f. Returns the category number just set.
+
+f:getrecid(i): returns the unique ID of record index i from already open database f.
+
+os.getprefs(creator,id): returns a string with the preferecences specified by creator and id, or nil if it does not exist.
+
+os.setprefs(creator,id,prefs): sets the preferecences specified by creator and id to the given string prefs. Returns nothing.
+
+f:readdir(): reads a directory entry. Returns the entry name and type (4=directory, 8=regular file).
+
+os.mkdir(dirname): creates a VFS directory. Returns true if success or nil if an error ocurred.
+
+os.listdir(dirname[,suffix]): returns a table with the file names in a VFS directory. If the optional parameter is specified only files with that suffix are returned.
+
+resource.list(type,filename): returns a table with the resource ID's of the given type present on a resource database.
+
+resource.open(type,id[,filename]): opens the resource with specified type (4 character string) and id. The resource is searched in all open databases or, if the optional filename parameter is passed, only in the database named "filename". Returns a number identifying the resource.
+
+resource.close(r): closes the resource identified by number r. The number r is returned by the resource.open() function. Returns nothing.
+
+resource.get(r[,start[,end]]): returns a string with the contents of the resource identified by number r. You can optionally specify just a substring of the resource, with the start and end parameters. The number r is returned by the resource.open() function. Returns a string with the resource.
+
+resource.size(r): returns the size of the resource identified by number r. If the resource is a bitmap, two additional numbers are returned: the width and the height of the bitmap. The number r is returned by the resource.open() function.
+
+resource.draw(r[,mode]): draws the bitmap resource identified by the number r in the current cursor position. The cursor is advanced to the right of the bitmap. The optional mode parameter affects how pixels are transfered to screen (0=paint, 1=erase, 2=mask, 3=invert, 4=overlay, 5=paint inverse). The number r is returned by the resource.open() function. If the resource is not a bitmap, this function has no efect. Returns nothing.
+
+resource.md5(r): returns in a 16 byte binary string the MD5 digest of the resource identified by number r. The number r is returned by the resource.open() function.
+
+screen.mode(): returns four values: screen width, screen height, screen depth and true or false indicating if the screen supports color. In interactive mode the screen height is half of the full-screen mode.
+
+screen.clear([c]): erases the screen with the background color or with the optional c color, and moves the cursor to 0,0. Returns nothing.
+
+screen.color(fg[,bg]): sets the foreground color (fg) and optionally the background color (bg). Returns nothing.
+
+screen.rgb(r,g,b): returns the color equivalent to the (Red,Green,Blue) components.
+
+screen.pos(): returns two numbers with the current x,y cursor position.
+
+screen.moveto(x[,y]): moves the screen cursor to the x,y position. If y is omited the current y position is used.
+
+screen.line(x1,y1,x2,y2[,c]): draws a line from x1,y1 to x2,y2 using the fg color or the optional c color.
+
+screen.lineto(x,y[,c]): draws a line from current position to x,y using the fg color or the optional c color.
+
+screen.setpixel(x,y[,c]): draws a pixel at position x,y using the fg color or the optional c color.
+
+screen.getpixel(x,y): return a number with the color of pixel at position x,y.
+
+screen.rect(x,y,dx,dy[,c]): draws a rectangle at x,y, extending dx,dy pixels, using the fg color or the optional c color.
+
+screen.box(x,y,dx,dy[,c]): draws a filled rectangle at x,y, extending dx,dy pixels, using the fg color or the optional c color.
+
+screen.circle(x,y,rx,ry[,c]): draws an ellipse centered at x,y, with rx,ry as x,y radius, using the fg color or the optional c color. Use rx=ry for a circle.
+
+screen.disc(x,y,rx,ry[,c]): draws a filled ellipse centered at x,y, with rx,ry as x,y radius, using the fg color or the optional c color. Use rx=ry for a filled circle.
+
+screen.fill(x,y,[,c]): starts a flood fill in the pixel located at x,y with current color or the optional c color. The filling stops at pixels with a different color than the initial pixel. Returns nothing.
+
+screen.font(f): sets the text font to number f. Returns two numbers with the "average" width of a character and the height of a character, both in pixels. Note that PalmOS fonts are not fixed-width fonts, so if the returned width is used in calculations, you get just an approximation.
+
+screen.textsize(text): returns the width and height of the text string in pixels.
+
+screen.heading(r): sets the turtle heading to r radians. 0 points to the right, math.pi/2 points up, and so on. Returns nothing.
+
+screen.turn(r): turns the turtle r radians. r can be positive or negative and it is added to the current heading. Returns nothing.
+
+screen.walk(d): draws a line from the current cursor position, with extent d pixels and following the current heading. The cursor is positioned at the end of the line. Returns nothing.
+
+screen.jump(d): moves the cursor d pixels from the current cursor position, following the current heading. Returns nothing.
+
+buffer.get(x,y,dx,dy): saves in a buffer the pixels delimited by a rectangle at x,y, extending dx,dy pixels. Returns a number identifying the saved buffer.
+
+buffer.new(dx,dy): creates an blank buffer extending dx,dy pixels. Returns a number identifying the new buffer.
+
+buffer.put(id,x,y[,mode]): draws a saved buffer at coordinates x,y. The optional mode parameter affects how pixels are transfered to screen (0=paint, 1=erase, 2=mask, 3=invert, 4=overlay, 5=paint inverse). Returns nothing.
+
+buffer.use([id]): sets a selected buffer for drawing. If the argument is missing, the screen is selected for drawing. Returns nothing.
+
+buffer.free(id): frees the saved buffer. Returns nothing.
+
+buffer.write(filename[,id]): writes buffer identified by id into file filename. If id is not specified the current screen is written. Returns the resulting file size or nil in case of error.
+
+buffer.read(filename): reads a buffer from file filename. Returns a number identifying the new buffer, its width and its height. In case of error, nil is returned.
+
+screen.clip(x,y,dx,dy): sets the clipping region to the rectangle at x,y, extending dx,dy pixels. If no parameter is passed the clipping region is reset. Returns nothing.
+
+sprite.init(buffer[,x,y]): initializes the sprite engine. It must be called before any other sprite method. It accepts as argument a buffer handle created by buffer.new or buffer.read. This buffer will be used as the static background during the animation. Two additional optional parameters are the horizontal and vertical coordinates of the background top left corner on the screen (the background does not need to be the same size of the screen). Returns true on success, or nil plus an error message.
+
+sprite.finish(): finishes the sprite engine. Calling any other sprite method after finish is an error. Returns true on success, or nil plus an error message.
+
+sprite.add(index,table): adds one sprite to the sprite engine. At most 32 simultaneous sprites are supported. The first argument is the sprite index, between 1 and 32. This number is also the sprite priority. Lower numbered sprites are draw "below" higher numbered sprites. The second argument is the sprite definition table. Sprites can be added and removed between calls to sprite.update(). Returns true on success, or nil plus an error message.
+
+sprite.remove(index): removes one sprite from the sprite engine. The single argument is the sprite index. Sprites can be added and removed between calls to sprite.update(). Returns true on success, or nil plus an error message.
+
+sprite.update(): draws a complete frame to the screen, with background and all active sprites. The collision callback functions (if any) are also called inside the update method. To perform smooth animation, you will have to intercalate calls to gui.event (with the timeout parameter) and sprite.update.
+
+sound.midi(filename[,volume]): plays a Format 0 Standard MIDI file. The MIDI file can be a resource or a database record. If volume (0-64) is not specified, the default system Game volume is used. This function is blocking, that is, it will return only after the MIDI is played to the end. If the user taps on the screen during the play, however, the play interruped. Returns true if the MIDI file was valid and played to the end, or nil and and an error message if the MIDI file was invalid or the play was interrupted. A common error is trying to play the more common Format 1 MIDI, which is not supported by PalmOS.
+
+sound.play(filename[,volume]): plays sampled sound stored in a WAV file. If volume (0-64) is not specified, the default system Game volume is used. Returns the duration of the sampled sound in seconds, or nil in case of error. After the sample is played a sampleStop event is generated.
+
+sound.stop(): stops playing sampled sound. Returns nothing.
+
+gui.title([text]): sets the title of the current form. Works only in full-screen mode. If the parameter is omited, the title is erased.
+
+gui.menu(t): defines the menu items. Currently there is one fixed menu item that is always available: "About Plua". It is possible to define additional items by passing a table with strings to pmenu(). If a string starts with a letter followed by a colon, the letter is used as the item's shortcut.
+
+gui.control(table): creates a label, button, pushbutton, repeating button, selector trigger, slider, field, list or popup, with custom attributes defined in the table parameter. Returns the ID of the component or nil if it could not be created.
+
+gui.label(text): creates a label with given text in the current cursor position. The cursor is positioned to the right of the component. Returns the ID of the component or nil if it could not be created.
+
+gui.button(text[,bmpId[,filename]]): creates a button with given text in the current cursor position. The cursor is positioned to the right of the component. If the optional bmpId is passed and the PalmOS version supports graphic controls, a graphic button with the given bitmap resource ID is created instead. If an optional filename is passed, the bitmap will be searched on this file only. Returns the ID of the component or nil if it could not be created.
+
+gui.pbutton(text[,g[,bmpId[,filename]]]): creates a pushbutton with given text in the current cursor position. Pushbutons can be optionally placed in a given group number g. The cursor is positioned to the right of the component. If the optional bmpId is passed and the PalmOS version supports graphic controls, a graphic button with the given bitmap resource ID is created instead. If an optional filename is passed, the bitmap will be searched on this file only. Returns the ID of the component or nil if it could not be created.
+
+gui.rbutton(text[,bmpId[,filename]]): creates a repeating button with given text in the current cursor position. The cursor is positioned to the right of the component. If the optional bmpId is passed and the PalmOS version supports graphic controls, a graphic button with the given bitmap resource ID is created instead. If an optional filename is passed, the bitmap will be searched on this file only. Returns the ID of the component or nil if it could not be created.
+
+gui.checkbox(text): creates a pushbutton with given text in the current cursor position. The cursor is positioned to the right of the component. Returns the ID of the component or nil if it could not be created.
+
+gui.selector(text[,bmpId[,filename]]): creates a selector trigger with given text in the current cursor position. The cursor is positioned to the right of the component. If the optional bmpId is passed and the PalmOS version supports graphic controls, a graphic button with the given bitmap resource ID is created instead. If an optional filename is passed, the bitmap will be searched on this file only. Returns the ID of the component or nil if it could not be created.
+
+gui.slider(width,range[,value]): creates a slider control with the specified width in pixels. The slider values go from 0 to range-1. The optional value parameter is the initial slider value. The cursor is positioned to the right of the component. Returns the ID of the component or nil if it could not be created.
+
+gui.field(lines,cols,max[,text[,e,u]]): creates a text field with given number of lines and columns in the current cursor position. The field will accpet at most max chars. The field is optionally initialized with the specified text. The optional parameter "e" and "u" are values indicating if the field is editable and underlined, respectively. A nil value means false, and not nil value means true. If these parameters are passed, the text parameter must also be passed. The cursor is positioned below the component. Returns the ID of the component or nil if it could not be created. For fields with more than 1 line, a scroll bar is automatically placed to the right of the field if the user enters more text than the number of lines can display.
+
+gui.fieldattr(id,e,u): sets the attributes of an existing field identified by the given ID. The next two parameters are the same as in pfield(). Returns nothing.
+
+gui.setfocus(id): sets the focus to the field identified by the given ID. Works only with text fields. Returns nothing.
+
+gui.list(lines,cols,t[,sel]): creates a list with given number of lines and columns in the current cursor position. The list is filled with the elements of table t. Optionally the selected element is set to index sel. The cursor is positioned to the right of the component. Returns the ID of the component or nil if it could not be created.
+
+gui.popup(t[,sel]): creates a popup list in the current cursor position. The list is filled with the elements of table t. The size is automatically adjusted. Optionally the selected element is set to index sel. The cursor is positioned to the right of the component. Returns the ID of the component or nil if it could not be created.
+
+gui.gettext(id): returns a string with the text of the component identified by the given ID. For labels, buttons, pushbuttons, repeating buttons and checkboxes, the text is the label of the component. For field, the the text is its current contents. For list, the text is the current selected element.
+
+gui.settext(id,text): sets the text of the component identified by the given ID. Works with buttons, pushbuttons, repeating buttons, checkboxes, labels and fields. For labels, the text is changed only if the new length is not greater than the current length. For lists, the text argument must be a table. Returns nothing.
+
+gui.inserttext(id,text): inserts a string text in the field identified by the given ID. Returns nothing.
+
+gui.setlist(id,list): sets the text of the component identified by the given ID. Works with lists and popups. The list argument must be a table. Returns nothing.
+
+gui.getstate(id): returns a number with the state of the component identified by the given ID. For pushbuttons and checkboxes, the number is 1 if selected, 0 if not selected. For lists and popups, the number is the index of the selected item. For fiels, two numbers are returned: the start and ending position of the selected text.
+
+gui.setstate(id,n1[,n2]): sets the state (or index for lists and popups) of the component identified by the given ID to n1. Works with pushbuttons, checkboxes lists and popups. Returns nothing. If the component is a field, if only n1 is passed, sets the insertion point of the field. If n2 is also passed, selects a portion of the field text (from n1 to n2). Returns nothing.
+
+gui.nl(): positions the cursor at (x,y), where x is the leftmost position and y is below the "tallest" component of the current "line". Returns nothing.
+
+gui.tab([n]): advances the cursor 8 pixels to the right. It is useful when separating UI components on the same line. If n is specified the cursor is advanced 8*n pixels. Returns nothing.
+
+gui.destroy(): destroys all UI components currently in the screen. Returns nothing.
+
+gui.alert(text[,f]): if f is true, opens an error dialog with the specified text. If f is false or not present, opens an information dialog. The user must press the Ok button to close the dialog. Returns nothing.
+
+gui.confirm(text): opens a confirmation dialog with specified text. The user must press either the Yes or the No button to close the dialog. Returns true if Yes was pressed or false if No was pressed.
+
+gui.input([text[,initial]]): opens an input dialog with an optional text as title. A second optional parameter defines the initial value of the input. The user can enter up to 255 characters of input. The user must press either the Ok or the Cancel button to close the dialog. Returns a string with the input entered if Ok was pressed, or nil if Cancel was pressed.
+
+gui.selectdate([text[,y,m,d]]): opens the PalmOS day selection dialog. Text is an optional title, and y/m/d are the year, month and day initially shown by the dialog. Returns three numbers with the selected year, month and day, in this order, or nil if Cancel was pressed.
+
+gui.selecttime([text[,h,m]]): opens the PalmOS time selection dialog. Text is an optional title, and h and m are the hour and minute initially shown by the dialog. Returns two numbers with the selected hour and minute, in this order, or nil if Cancel was pressed.
+
+gui.selectcolor(text,c): opens the PalmOS color selection dialog. Text is the dialog title, and c is the initial color shown in the dialog. Works only in full screen mode, and only on PalmOS 3.5 or greater. Returns a number with the selected color if Ok was pressed, or nil if Cancel was pressed.
+
+gui.gsi(): creates a Graffiti State Indicator in the current cursor position. Works only in full screen mode, and only on PalmOS 3.5 or greater. Returns nothing.
+
+gui.dialog(x,y,dx,dy,title): pops up an empty dialog at position x,y with dimensions dx,dy. Controls can be created inside the dialog. The dialog must be closed with gui.destroy.
+
+gui.event([n]): blocks until an event is generated. Events can be a hard button press, a pen event, a UI control selection or whether there is I/O pending. The first returned value is always the event type: penDown, penUp, penMove, keyDown, ctlSelect, ctlRepeat, popSelect, lstSelect, menuSelect, ioPending, sampleStop, appStop or nilEvent. The ioPending event is a efficient way for a program to wait for I/O without polling. The appStop event is sent when the user quits the application. The only way to exit a running application is to catch this event end quit the event loop. If the optional n parameter is passed, gui.event() will wait at most n millisecons for an event. If no event happens, it will return nilEvent.
+
+gui.main([n]): loops forever calling gui.event() until an appStop event is generated. Returns nothing. The optional parameter n is passed to gui.event(), if present.
+
+gui.sethandler(id,f): sets up an event handler for an system event or UI control. The function will be automatically called inside gui.event() whenever an event is generated. The second parameter is a lua function to be used as the event handler. If the first parameter is the ID of a UI control, like a button, the function will be called whenever the control is selected. If the first parameter is a system event constant (nilEvent, keyEvent, penUp, penDown, penMove, menuSelect, ioPending or sampleStop) the function will be called whenever that event is generated.
+
+sound.beep(n): plays the system sound identified by the number n. Returns nothing.
+
+sound.tone(freq,len[,volume]): plays a tone with frequency freq (in Hz), duration len (in millisenconds), and optionally volume (0-64). Returns nothing.
+
+bit.andb(n1,n2): returns a bitwise AND between integers n1 and n2.
+
+bit.orb(n1,n2): returns a bitwise OR between integers n1 and n2.
+
+bit.xorb(n1 n2): returns a bitwise XOR between integers n1 and n2.
+
+bit.notb(n): returns a bitwise NOT of integer n.
+
+bin.pack(format,table): packs the elements of a table into a binary string, and the returns this string. The binary data format is specificed by the string argument format, in which each letter refers to a different encoding: b=8 bits signed integer; B=8 bits unsigned integer; w=big endian 16 bits signed integer; W=big endian 16 bits unsigned integer; l=big endian 32 bits signed integer; L=big endian 32 bits unsigned integer; F=big endian 32 bits float; D=big endian 64 bits double; S=variable length string, ended with ASCII null.
+
+bin.unpack(format,string): unpacks a binary string encoded with bin.pack and returns a table with the decoded elements.
+
+bin.md5(string): returns in a 16 byte binary string the MD5 digest of the string argument.
+
+os.sleep(s): psleep(s): pauses the execution for s seconds (s can be a decimal number). Returns nothing.
+
+os.copy(s): copies the string s to the clipboard. Returns nothing.
+
+os.paste(): returns a string with the contents of the clipboard.
+
+os.mem(): returns used memory and total memory, both in KB.
+
+_PLUA_VERSION: a string with the Plua version number.
+
+_OS_VERSION: a string with the PalmOS version number.
+
+_OS_NAME: a string with the OS name.
+

@@ -1,0 +1,3 @@
+sprite.*: 5.0
+os.date, opcao "!": 4.0
+os.date, formato "%z": 4.0

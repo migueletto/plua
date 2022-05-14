@@ -1,0 +1,11 @@
+#!/bin/sh
+
+. ../VERSION
+
+rm -f pluac-${VERSION}.linux.zip
+
+cp ../bin/linux/plua2c linux
+
+zip pluac-${VERSION}.linux.zip License.txt linux/plua2c linux/Readme.txt
+
+exit 0

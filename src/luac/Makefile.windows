@@ -1,0 +1,26 @@
+# makefile for Lua compiler
+
+LUA= ../..
+
+include $(LUA)/config.windows
+
+INCS= $(INC) $(EXTRA_INCS)
+POBJS= windows/pluac.o windows/pdb.o windows/print.o windows/lopcodes.o
+
+PT= $(BIN)/plua2c.exe
+
+windows/%.o: %.c
+	$(CC) $(CFLAGS) -c $< -o $@
+
+all:	$(PT)
+
+$(PT):	$(POBJS) $(LIB)/liblua.a $(LIB)/liblualib.a
+	$(CC) -static -o $@ $(MYLDFLAGS) $(POBJS) -L$(LIB) -llua -llualib $(EXTRA_LIBS) $(DLLIB)
+	$(STRIP) $@
+
+# print.c needs opcode names from lopcodes.c
+windows/lopcodes.o:	../lopcodes.c ../lopcodes.h
+	$(CC) -o $@ -c $(CFLAGS) -DLUA_OPNAMES ../lopcodes.c
+
+clean:
+	rm -f $(POBJS) $(PT)

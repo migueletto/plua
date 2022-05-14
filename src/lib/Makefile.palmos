@@ -1,0 +1,30 @@
+# makefile for Lua standard library
+
+LUA= ../..
+
+include $(LUA)/config.palmos
+
+palmos/%.o: %.c
+	$(CC) $(CFLAGS) -c $< -o $@
+
+EXTRA_DEFS= $(POPEN) $(TMPNAM) $(DEGREES) $(LOADLIB)
+
+OBJS= palmos/lauxlib.o palmos/lbaselib.o palmos/ldblib.o palmos/liolib.o palmos/lmathlib.o palmos/ltablib.o palmos/lstrlib.o palmos/loadlib.o palmos/lbwlib.o palmos/lpacklib.o
+SRCS= lauxlib.c lbaselib.c ldblib.c liolib.c lmathlib.c ltablib.c lstrlib.c loadlib.c lbwlib.c lpacklib.c
+
+T= $(LIB)/liblualib.a
+
+all:	$T
+
+$T:	$(OBJS)
+	$(AR) $@ $(OBJS)
+	$(RANLIB) $@
+
+clean:
+	rm -f $(OBJS) $T
+
+co:
+	co -q -f -M $(SRCS)
+
+klean:	clean
+	rm -f $(SRCS)

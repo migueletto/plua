@@ -1,0 +1,5 @@
+syslib { "TestLib2" Ts2L } 
+
+export { 
+  PluaLibOpen PluaLibClose PluaLibSleep PluaLibWake PluaLibGet
+}

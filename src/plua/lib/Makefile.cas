@@ -1,0 +1,22 @@
+# The standard names of gcc/prc-tools binaries.
+
+CC       = m68k-palmos-gcc
+BUILDPRC = build-prc
+
+# You do not need to change anything below this point.
+
+CFLAGS   = -O2 -Wall -Wno-switch
+LDFLAGS  = -L. -e start -nostartfiles
+OBJS     = plualib.o plualib-dispatch.o
+LIBS     = -lnfm
+
+all: CasLib.prc
+
+CasLib.prc: CasLib.def CasLib 
+	$(BUILDPRC) -o CasLib.prc CasLib.def CasLib 
+
+CasLib: $(OBJS) CasLib.o
+	$(CC) $(CFLAGS) $(LDFLAGS) $(OBJS) CasLib.o $(LIBS) -o CasLib
+
+clean:
+	rm -f CasLib.o CasLib CasLib.prc

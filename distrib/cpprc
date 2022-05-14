@@ -1,0 +1,14 @@
+cp ./prc/plua2.prc /media/CART_O/prc
+cp ./prc/plua2rt.prc /media/CART_O/prc
+#cp ./prc/plua2help.prc /media/CART_O/prc
+#cp ./examples/Demo/GUI.prc /media/CART_O/prc
+#cp ./examples/Demo/GUI2.prc /media/CART_O/prc
+#cp ./examples/Demo/Life.prc /media/CART_O/prc
+#cp ./examples/Demo/Turtle.prc /media/CART_O/prc
+#cp ./examples/Sound/Sound.prc /media/CART_O/prc
+#cp ./examples/Aquario/Aquario.prc /media/CART_O/prc
+#cp ./examples/LuaPad/LuaPad.prc /media/CART_O/prc
+#cp ./examples/LuaCalc/3dlib2.prc /media/CART_O/prc
+#cp ./examples/LuaCalc/LuaCalc.prc /media/CART_O/prc
+#cp ./examples/ScreenTest/ScreenTest.prc /media/CART_O/prc
+#cp ./examples/ScreenTest/ScreenLib.prc /media/CART_O/prc

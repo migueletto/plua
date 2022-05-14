@@ -1,0 +1,16 @@
+table.concat(table[,sep[,i[,j]]]): returns table[i]..sep..table[i+1] ... sep..table[j]. The default value for sep is the empty string, the default for i is 1, and the default for j is the size of the table. If i is greater than j, returns the empty string.
+
+table.foreach(table,f): executes the given f over all elements of table. For each element, f is called with the index and respective value as arguments. If f returns a non-nil value, then the loop is broken, and this value is returned as the final value of foreach.
+
+table.foreachi(table,f): executes the given f over the numerical indices of table. For each index, f is called with the index and respective value as arguments. Indices are visited in sequential order, from 1 to n, where n is the size of the table. If f returns a non-nil value, then the loop is broken and this value is returned as the result of foreachi.
+
+table.getn(table): returns the size of a table, when seen as a list. If the table has an n field with a numeric value, this value is the size of the table. Otherwise, if there was a previous call to table.setn over this table, the respective value is returned. Otherwise, the size is one less the first integer index with a nil value.
+
+table.sort(table[,comp]): sorts table elements in a given order, in-place, from table[1] to table[n], where n is the size of the table. If comp is given, then it must be a function that receives two table elements, and returns true when the first is less than the second (so that not comp(a[i+1],a[i]) will be true after the sort). If comp is not given, then the standard Lua operator < is used instead. The sort algorithm is not stable, that is, elements considered equal by the given order may have their relative positions changed by the sort.
+
+table.insert(table,[pos,]value): inserts element value at position pos in table, shifting up other elements to open space, if necessary. The default value for pos is n+1, where n is the size of the table, so that a call table.insert(t,x) inserts x at the end of table t. This function also updates the size of the table by calling table.setn(table, n+1).
+
+table.remove(table[,pos]): removes from table the element at position pos, shifting down other elements to close the space, if necessary. Returns the value of the removed element. The default value for pos is n, where n is the size of the table, so that a call table.remove(t) removes the last element of table t. This function also updates the size of the table by calling table.setn(table, n-1).
+
+table.setn(table,n): updates the size of a table. If the table has a field "n" with a numerical value, that value is changed to the given n. Otherwise, it updates an internal state so that subsequent calls to table.getn(table) return n.
+

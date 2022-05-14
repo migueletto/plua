@@ -1,0 +1,1673 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+<title>Plua 2.0 documentation</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+</head>
+<body bgcolor="#ffffff">
+<h1>Plua 2.0</h1>
+<h1>1. Introduction</h1>
+
+Plua 2.0 is a port of Lua 5.0.3 (plus a small IDE) for the Palm Computing platform.
+Lua is a programming language designed at TeCGraf, the Computer Graphics
+Technology Group of PUC-Rio, Brazil.<p />
+
+Plua 2.0 requires PalmOS 3.5 or greater.<p />
+
+More information on Lua can be found
+<a href="http://www.lua.org">here</a>.<br />
+
+More information on Plua can be found
+<a href="http://meusite.uai.com.br/~mmand/plua/plua.htm">here</a>.<br />
+
+There is a Plua discussion group
+<a href="http://groups.yahoo.com/group/plua">here</a> (registration required).<p />
+
+THIS SOFTWARE COMES WITH ABSOLUTELY NO WARRANTY, SO USE IT AT YOUR OWN RISK.<p />
+Plua is Copyright (C) Marcio Migueletto de Andrade.<p />
+
+<h1>2. Operation</h1>
+
+Plua can be used in two different modes. The first one provides a
+quick read-eval-print loop. In this mode you can type a program
+and have it evaluated immediatelly. You type a program in the
+lower half of the screen and the results are printed in the upper half.
+To evaluate the current program, tap the Run button.
+To clear the current program, tap the Clear button.<p />
+
+For example, if you type in the text field this program:<br />
+<pre>print("Result = ", 2*3)</pre>
+Plua will print the following in the result area:<br />
+<pre>Result =   6</pre>
+
+The second mode also allows you to run Lua programs,
+but with two differences:<p />
+<ul>
+<li>The program is retrieved from a MemoPad record, a Doc file, a Stream file or a file stored in a VFS card.</li>
+<li>The entire screen is available to display results.</li>
+</ul>
+
+Tap the File button to access the file selection screen. On the top right corner you can choose one of the four file types (Memo, Doc, Stream or Card). A list of current available programs of the selected type is displayed.<p />
+
+If you create Memo with Lua code, it must start
+with "-- " (without the quotes and with a trailing space) and then the program
+name (usually a single word) ended with ".lua", otherwise it will not be
+visible in Plua. Doc, Stream and VFS files must also end in ".lua".<p />
+
+Select one program on the list and tap the Run button to run it.
+Plua will switch to a full screen mode and run the program.
+When it is finished Plua will return to the program selection screen.
+If you want to stop a program before it is finished tap the Applications icon.
+Plua looks for VFS files in the /PALM/Programs/Plua/src directory on your expansion card.<p />
+
+The button Compile is used to compile a program into a PRC file. The generated
+PRC is a standalone application that can be accessed like any other one in
+the Application Launcher. Note however that Plua or PluaRT (the Plua runtime)
+needs to be installed. You do not need to install both if you just want to run
+Plua applications. If neither Plua nor the runtime is installed and a compiled
+program is run, an error message will be displayed and the program will be
+aborted. Generated PRCs have a fixed pre-defined icon.
+Note that it is not necessary to compile a program in order to run it.
+If you just to want to run a program from within Plua, you can use the
+Run button directly. The Compile button should be used only when you
+want to generate a standalone PRC with your program.<p />
+
+Tap the Main button to return to the main screen. For Memos you have two additional
+buttons: New and Edit, to create and edit Memos respectively. For Docs, there is
+also a Edit button. If you tap this button Plua will open the third-party
+application SrcEdit to edit your doc file. If this application is not installed
+nothing will happen.<p />
+
+Preferences are accessible via Menu/Preferences in the main screen.
+If "Read-only mode" is checked, all attempts to open a database for writing or
+removing a database will be aborted, and an error message will be displayed.
+If "Clear output" is checked, the Clear button also clears the output area.<p />
+
+The Plua online help system is accessible via the PalmOS standard "Find" button.
+If you tap Find while in the main window or editing a memo, Plua will open a
+dialog showing all function names. If you select one function name and tap
+Goto again Plua will show the function reference. If you tap the Index button,
+all function names will be shown again. Tap Done to close the help dialog.
+While in the main window or editing a memo, before tapping Find you may first
+select a word, in which case the help dialog will open directly in the function
+reference. In order to use the help system, you must first install pluahelp.prc.
+
+<h1>3. Plua compared to Lua</h1>
+
+A great effort was put on porting the complete Lua package.
+Some portions of the source code were kept almost intact, while others
+have been heavily modified in order to fit the PalmOS architecture.
+There are a few limitations when compared to the standard Lua distribution:
+<ul>
+  <li>The following functions of the standard I/O library (liolib) are missing:
+  os.difftime, os.execute, os.setlocale, io.popen.
+  The os.date function is implemented partially (some formatting options
+  are missing).</li>
+
+  <li>There is no concept of "stdin", the standard input stream. Programs
+  can read data from files, but not from user input. User input is restricted
+  to pen/key events and interaction with UI components.</li>
+
+  <li>The tonumber() function supports only base 10.</li>
+
+  <li>Most of the functions in the standard mathematical library (lmathlib)
+  require MathLib to work. MathLib is a third-party library and is not distributed with Plua.</li>
+</ul>
+
+Plua also offers many extensions to the standard Lua distribution.
+In addition to the functions of standard Lua libraries, Plua provides
+additional functions to access PalmOS specific features.
+In the following function prototypes, optional parameters are denoted by square
+brackets.<p />
+
+Database I/O functions:
+<ul>
+<li>os.listdb(creator, type [, suffix]): returns a table with all databases
+    matching the specified type and creator, and optional suffix.
+    Type and creator are either a 4 character
+    string or an empty string to accept anything.</li>
+<li>io.open(filename, mode): this is a standard Lua function, but in the case of PalmOS databases,
+    besides the handle to the open file it returns the number of records in the database.</li>
+<li>f:getdbcat(n): returns the name of category n (where 0 <= n <= 15) from
+    already open database f.</li>
+<li>f:setdbcat(n, "cat"): sets the name of category n (where 0 <= n <= 15) to
+    "cat" on already open database f. Returns the category name just set.</li>
+<li>f:openrec(i): opens the record with index i from an already open database f.
+    If i is negative, the database AppInfo record is opened. 
+    Returns the size of the record or nil if an error occurred.</li>
+<li>f:createrec(size): creates a new record with given size in (already open)
+    database f. The record is added at the end of the database. The created
+    record is NOT automatically opened, so it is necessary to call openrec()
+    to open the just created record before using it.
+    Returns the index of the new record or nil if an error ocurred.</li>
+<li>f:deleterec(i): deletes the record with index i from (already open)
+    database f. The record can not be open when it is deleted.
+    Returns true if success or nil if an error occurred.</li>
+<li>f:removerec(i): removes the record with index i from (already open)
+    database f. The record can not be open when it is removed.
+    Returns true if success or nil if an error occurred.</li>
+<li>f:closerec(): closes the current open record of (already open) database f.
+    Returns true if success or nil if an error occurred.</li>
+<li>f:resizerec(i, size): resizes the record with index i from (already open)
+    database f to the specified size. If the record beeing resized is the
+    currently open record, it is closed, resized and then reopened.
+    Returns true if success or nil if an error occurred.</li>
+<li>f:getreccat(i): returns the category number of record index i from
+    already open database f.</li>
+<li>f:setreccat(i, n): sets the category number to n for record index i on
+    already open database f. Returns the category number just set.</li>
+<li>f:getrecid(i): returns the unique ID of record index i from
+    already open database f.</li>
+</ul>
+
+Misc I/O functions:
+<ul>
+<li>f:status(): returns true if there is input pending on the serial or network connection f,
+    or false otherwise. It can be used after receiving an ioPending event to know which
+    connection has pending input.</li>
+</ul>
+
+VFS directory functions:
+<ul>
+<li>os.mkdir(dirname): creates a VFS directory.
+    Returns true if success or nil if an error ocurred.</li>
+<li>os.listdir(dirname [, suffix]): returns a table with the file names on a VFS
+    directory. If the optional parameter is specified only files with that
+    suffix are returned.</li>
+<li>io.open(dirname): this is a standard Lua function, but it can be used to open a
+    VFS directory for reading.
+    Returns a handle to the open directory.</li>
+<li>f:readdir(): reads a directory entry.
+    Returns the entry name and type (4=directory, 8=regular file).</li>
+</ul>
+
+Resource functions:
+<ul>
+<li>resource.list(type, filename): returns a table with the resource ID's of the given
+    type present on a resource database.</li>
+<li>resource.open(type, id [, filename]): opens the resource with specified type
+    (4 character string) and id. The resource is searched in all open databases
+    or, if the optional filename parameter is passed, only in the database named
+    "filename". Returns a number identifying the resource.</li>
+<li>resource.close(r): closes the resource identified by number r.
+    The number r is returned by the resource.open() function.
+    Returns nothing.</li>
+<li>resource.get(r [, start [, end]]): returns a string with the contents of the
+    resource identified by number r. You can optionally specify just a substring
+    of the resource, with the start and end parameters.
+    The number r is returned by the resource.open() function.
+    Returns a string with the resource.</li>
+<li>resource.size(r): returns the size of the resource identified by number r.
+    If the resource is a bitmap, two additional numbers are returned: the
+    width and the height of the bitmap.
+    The number r is returned by the resource.open() function.</li>
+<li>resource.draw(r [, mode]): draws the bitmap resource identified by the
+    number r in the current cursor position. The cursor is advanced to the
+    right of the bitmap. The optional mode parameter affects how pixels are
+    transfered to screen (0=paint, 1=erase, 2=mask, 3=invert, 4=overlay,
+    5=paint inverse). The number r is returned by the resource.open()
+    function. If the resource is not a bitmap, this function has no efect.
+    Returns nothing.</li>
+<li>resource.md5(r): returns in a 16 byte binary string the MD5 digest of the resource
+    identified by number r. The number r is returned by the resource.open() function.</li>
+</ul>
+
+Screen functions:
+<ul>
+<li>screen.mode(): returns four values: screen width, screen height, screen depth
+    and true or false indicating if the screen supports color. In interactive mode
+    the screen height is half of the full-screen mode.</li>
+<li>screen.clear([c]): erases the screen with the background color or with the
+    optional c color, and moves the cursor to 0,0.
+    Returns nothing.</li>
+<li>screen.color(fg [,bg]): sets the foreground color (fg) and optionally the
+    background color (bg).
+    Returns nothing.</li>
+<li>screen.rgb(r, g, b): returns the color equivalent to the (Red,Green,Blue)
+    components.</li>
+<li>screen.pos(): returns two numbers with the current x,y cursor position.</li>
+<li>screen.moveto(x [,y]): moves the screen cursor to the x,y position. If y is omited the current y position is used.</li>
+<li>screen.line(x1, y1, x2, y2 [,c]): draws a line from x1,y1 to x2,y2 using the
+    fg color or the optional c color.</li>
+<li>screen.lineto(x, y [,c]): draws a line from current position to x,y using the
+    fg color or the optional c color.</li>
+<li>screen.setpixel(x, y [,c]): draws a pixel at position x,y using the
+    fg color or the optional c color.</li>
+<li>screen.getpixel(x, y): return a number with the color of pixel at position x,y.</li>
+<li>screen.rect(x, y, dx, dy [,c]): draws a rectangle at x,y, extending dx,dy
+    pixels, using the fg color or the optional c color.</li>
+<li>screen.box(x, y, dx, dy [,c]): draws a filled rectangle at x,y, extending dx,dy
+    pixels, using the fg color or the optional c color.</li>
+<li>screen.circle(x, y, rx, ry [,c]): draws an ellipse centered at x,y, with rx,ry
+    as x,y radius, using the fg color or the
+    optional c color. Use rx=ry for a circle.</li>
+<li>screen.disc(x, y, rx, ry [,c]): draws a filled ellipse centered at x,y, with
+    rx,ry as x,y radius, using the fg color or the optional c color.
+    Use rx=ry for a filled circle.</li>
+<li>screen.fill(x, y, [,c]): starts a flood fill in the pixel located at x,y with
+    current color or the optional c color. The filling stops at pixels with a
+    different color than the initial pixel. Returns nothing.</li>
+<li>screen.font(f): sets the text font to number f. Returns two numbers with the
+    "average" width of a character and the height of a character, both in
+    pixels. Note that PalmOS fonts are not fixed-width fonts, so if the returned
+    width is used in calculations, you get just an approximation.</li>
+<li>screen.textsize(text): returns the width and height of the text string
+    in pixels.</li>
+<li>screen.clip(x, y, dx, dy): sets the clipping region to the rectangle at x,y,
+    extending dx,dy pixels. If no parameter is passed the clipping region is
+    reset. Returns nothing.</li>
+<li>screen.heading(r): sets the turtle heading to r radians.
+    0 points to the right, math.pi/2 points up, and so on.
+    Returns nothing.</li>
+<li>screen.turn(r): turns the turtle r radians. r can be positive or
+    negative and it is added to the current heading.
+    Returns nothing.</li>
+<li>screen.walk(d): draws a line from the current cursor position,
+    with extent d pixels and following the current heading.
+    The cursor is positioned at the end of the line. Returns nothing.</li>
+<li>screen.jump(d): moves the cursor d pixels from the current cursor position,
+    following the current heading. Returns nothing.</li>
+</ul>
+
+Offscreen buffer functions:
+<ul>
+<li>buffer.get(x, y, dx, dy): saves in a buffer the pixels delimited by
+    a rectangle at x,y, extending dx,dy pixels. Returns a number identifying
+    the saved buffer.</li>
+<li>buffer.new(dx, dy): creates an blank buffer
+    extending dx,dy pixels. Returns a number identifying the new buffer.</li>
+<li>buffer.put(id, x, y [,mode]): draws a saved buffer at coordinates x,y.
+    The optional mode parameter affects how pixels are transfered
+    (0=paint, 1=erase, 2=mask, 3=invert, 4=overlay, 5=paint inverse).
+    Returns nothing.</li>
+<li>buffer.use([id]): sets a selected buffer for drawing. If the argument is
+    missing, the screen is selected for drawing. Returns nothing.</li>
+<li>buffer.free(id): frees the saved buffer. Returns nothing.</li>
+<li>buffer.write(filename [,id]): writes buffer identified by id into file
+    filename. If id is not specified the current screen is written. Returns
+    the resulting file size or nil in case of error.</li>
+<li>buffer.read(filename): reads a buffer from file filename. Returns a number
+    identifying the new buffer, its width and its height. In case of error,
+    nil is returned.</li>
+</ul>
+
+Sprite functions:
+<ul>
+<li>sprite.init(buffer [,x, y]): initializes the sprite engine. It must be called
+    before any other sprite method. It accepts as argument a buffer handle
+    created by buffer.new or buffer.read. This buffer will be used as
+    the static background during the animation. Two additional optional
+    parameters are the horizontal and vertical coordinates of the
+    background top left corner on the screen (the background does not need
+    to be the same size of the screen).
+    Returns true on success, or nil plus an error message.</li>
+<li>sprite.finish(): finishes the sprite engine.
+    Calling any other sprite method after finish is an error.
+    Returns true on success, or nil plus an error message.</li>
+<li>sprite.add(index, table): adds one sprite to the sprite engine. At most 32
+    simultaneous sprites are supported. The first argument is the sprite index, between 1 and 32.
+    This number is also the sprite priority. Lower numbered sprites are draw "below" higher
+    numbered sprites. The second argument is the sprite definition table.
+    Sprites can be added and removed between calls to sprite.update().
+    Returns true on success, or nil plus an error message.</li>
+<li>sprite.remove(index): removes one sprite from the sprite engine.
+    The single argument is the sprite index.
+    Sprites can be added and removed between calls to sprite.update().
+    Returns true on success, or nil plus an error message.</li>
+<li>sprite.update(): draws a complete frame to the screen, with background and all
+    active sprites. The collision callback functions (if any) are also
+    called inside the update method. To perform smooth animation, you will
+    have to intercalate calls to gui.event (with the timeout parameter) and
+    sprite.update.</li>
+</ul>
+
+GUI functions:
+<ul>
+<li>gui.title([text]): sets the title of the current form. Works only in
+    full-screen mode. If the parameter is omited, the title is erased.</li>
+<li>gui.menu(t): defines the menu items. Currently there is one fixed menu item
+    that is always available: "About Plua". It is possible to define
+    additional items by passing a table with strings to gui.menu(). If a string
+    starts with a letter followed by a colon, the letter is used as the
+    item's shortcut.</li>
+<li>gui.label(text): creates a label with given text in the current cursor
+    position. The cursor is positioned to the right of the component.
+    Returns the ID of the component or nil if it could not be created.</li>
+<li>gui.button(text [,bmpId [, filename]]): creates a button with given text in the current
+    cursor position.  The cursor is positioned to the right of the component.
+    If the optional bmpId is passed and the PalmOS version supports graphic
+    controls, a graphic button with the given bitmap resource ID is created
+    instead.
+    If an optional filename is passed, the bitmap will be searched on this file only.
+    Returns the ID of the component or nil if it could not be created.</li>
+<li>gui.pbutton(text [,g [, bmpId [, filename]]]): creates a pushbutton with given text in the
+    current cursor position. Pushbutons can be optionally placed in a given
+    group number g. The cursor is positioned to the right of the component.
+    If the optional bmpId is passed and the PalmOS version supports graphic
+    controls, a graphic button with the given bitmap resource ID is created
+    instead.
+    If an optional filename is passed, the bitmap will be searched on this file only.
+    Returns the ID of the component or nil if it could not be created.</li>
+<li>gui.rbutton(text [,bmpId [, filename]]): creates a repeating button with given text in the
+    current cursor position. The cursor is positioned to the right of the
+    component. If the optional bmpId is passed and the PalmOS version supports
+    graphic controls, a graphic button with the given bitmap resource ID is
+    created instead.
+    If an optional filename is passed, the bitmap will be searched on this file only.
+    Returns the ID of the component or nil if it could not be created.</li>
+<li>gui.checkbox(text): creates a checkbox with given text in the current
+    cursor position. The cursor is positioned to the right of the component.
+    Returns the ID of the component or nil if it could not be created.</li>
+<li>gui.selector(text [,bmpId [, filename]]): creates a selector trigger with given text in
+    the current cursor position. The cursor is positioned to the right of the
+    component. If the optional bmpId is passed and the PalmOS version supports
+    graphic controls, a graphic button with the given bitmap resource ID is
+    created instead.
+    If an optional filename is passed, the bitmap will be searched on this file only.
+    Returns the ID of the component or nil if it could not be created.</li>
+<li>gui.slider(width, range [,value]): creates a slider control with the
+    specified width in pixels. The slider values go from 0 to range-1. The
+    optional value parameter is the initial slider value. The cursor is
+    positioned to the right of the component.
+    Returns the ID of the component or nil if it could not be created.</li>
+<li>gui.field(lines, cols, max [,text [, e, u]]): creates a text field with given
+    number of lines and columns in the current cursor position. The field will
+    accpet at most max chars. The field is optionally initialized with the
+    specified text. The optional parameter "e" and "u" are values
+    indicating if the field is editable and underlined, respectively.
+    A nil value means false, and not nil value means true. If these parameters
+    are passed, the text parameter must also be passed.
+    The cursor is positioned below the component.
+    Returns the ID of the component or nil if it could not be created.
+    For fields with more than 1 line, a scroll bar is automatically placed
+    to the right of the field if the user enters more text than the number of
+    lines can display.</li>
+<li>gui.fieldattr(id, e, u): sets the attributes of an existing field identified
+    by the given ID. The next two parameters are the same as in pfield().
+    Returns nothing.</li>
+<li>gui.setfocus(id): sets the focus to the field identified by the given ID.
+    Works only with text fields. Returns nothing.</li>
+<li>gui.list(lines, cols, t [,sel]): creates a list with given number of lines
+    and columns in the current cursor position. The list is filled with the
+    elements of table t. Optionally the selected element is set to index sel.
+    The cursor is positioned to the right of the component.
+    Returns the ID of the component or nil if it could not be created.</li>
+<li>gui.popup(t [,sel]): creates a popup list in the current cursor position.
+    The list is filled with the elements of table t. The size is automatically
+    adjusted. Optionally the selected element is set to index sel.
+    The cursor is positioned to the right of the component.
+    Returns the ID of the component or nil if it could not be created.</li>
+<li>gui.gettext(id): returns a string with the text of the component
+    identified by the given ID. For labels, buttons, pushbuttons, repeating
+    buttons and checkboxes, the text is the label of the component.
+    For field, the the text is its current contents. For list, the text is the
+    current selected element.</li>
+<li>gui.settext(id, text): sets the text of the component
+    identified by the given ID. Works with buttons, pushbuttons, repeating
+    buttons, checkboxes, labels and fields. For labels, the text is
+    changed only if the new length is not greater than the current length.
+    For lists, the text argument must be a table.
+    Returns nothing.</li>
+<li>gui.inserttext(id, text): inserts a string text in the field
+    identified by the given ID. 
+    Returns nothing.</li>
+<li>gui.setlist(id, list): sets the text of the component
+    identified by the given ID. Works with lists and popups.
+    The list argument must be a table. Returns nothing.</li>
+<li>gui.getstate(id): returns a number with the state of the component
+    identified by the given ID. For pushbuttons and checkboxes, the number is
+    1 if selected, 0 if not selected. For lists and popups, the number is the
+    index of the selected item. For fiels, two numbers are returned: the start
+    and ending position of the selected text.</li>
+<li>gui.setstate(id, n): sets the state (or index for lists and popups) of the
+    component identified by the given ID. Works with pushbuttons, checkboxes
+    lists and popups.
+    Returns nothing.</li>
+<li>gui.setstate(id, start [,end]): if only start is passed, sets the insertion
+    point of the field identified by the given ID. If end is also passed,
+    selects a portion of the field text (from start to end).
+    Returns nothing.</li>
+<li>gui.nl(): positions the cursor at (x,y), where x is the leftmost position
+    and y is below the "tallest" component of the current "line".
+    Returns nothing.</li>
+<li>gui.tab([n]): advances the cursor 8 pixels to the right. It is useful when
+    separating UI components on the same line. If n is specified the cursor
+    is advanced 8*n pixels.
+    Returns nothing.</li>
+<li>gui.destroy(): destroys all UI components currently in the screen.
+    Returns nothing.</li>
+<li>gui.alert(text, [f]): if f is true, opens an error dialog with the specified text.
+    If f is false or not present, opens an information dialog. The user must press the
+    Ok button to close the dialog. Returns nothing.</li>
+<li>gui.confirm(text): opens a confirmation dialog with specified text.
+    The user must press either the Yes or the No button to close the dialog.
+    Returns true if Yes was pressed or false if No was pressed.</li>
+<li>gui.input([text [,initial]]): opens an input dialog with an optional text as
+    title. A second optional parameter defines the initial value of the input.
+    The user can enter up to 255 characters of input.
+    The user must press either the Ok or the Cancel button to close the dialog.
+    Returns a string with the input entered if Ok was pressed, or nil if
+    Cancel was pressed.</li>
+<li>gui.selectdate([text [, y, m, d]]): opens the PalmOS day selection dialog.
+    Text is an optional title, and y/m/d are the year, month and day initially
+    shown in the dialog. Returns three numbers with the selected year, month
+    and day, in this order, or nil if Cancel was pressed.</li>
+<li>gui.selecttime([text [, h, m]]): opens the PalmOS time selection dialog.
+    Text is an optional title, and h and m are the hour and minute initially
+    shown in the dialog. Returns two numbers with the selected hour and
+    minute, in this order, or nil if Cancel was pressed.</li>
+<li>gui.selectcolor(text, c): opens the PalmOS color selection dialog.
+    Text is the dialog title, and c is the initial color shown in the dialog.
+    Works only in full screen mode, and only on PalmOS 3.5 or greater.
+    Returns a number with the selected color if Ok was pressed,
+    or nil if Cancel was pressed.</li>
+<li>gui.gsi(): creates a Graffiti State Indicator in the current cursor position.
+    Works only in full screen mode, and only on PalmOS 3.5 or greater.
+    Returns nothing.</li>
+<li>gui.dialog(x, y, dx, dy, title): pops up an empty dialog at position x,y
+    with dimensions dx,dy. Controls can be created inside the dialog.
+    The dialog must be closed with gui.destroy.</li>
+<li>gui.event([n]): blocks until an event is generated. Events can be a hard button
+    press, a pen event, a UI control selection or whether there is I/O pending.
+    The first returned value is always the event type: penDown, penUp, penMove,
+    keyDown, ctlSelect, ctlRepeat, popSelect, lstSelect, menuSelect, ioPending,
+    sampleStop, appStop or nilEvent.
+    The ioPending event is a efficient way for a program to wait for I/O without polling.
+    The appStop event is sent when the user quits the application.
+    You must catch this event end quit the event loop in order to exit.
+    If the optional n parameter is passed, gui.event() will wait at
+    most n millisecons for an event. If no event happens, it will return nilEvent.</li>
+<li>gui.main([n]): loops forever calling gui.event() until an appStop event is generated.
+    Returns nothing. The optional parameter n is passed to gui.event(), if present.
+    This function is defined as:
+    <pre>
+    function gui.main(n)
+      repeat until gui.event(n) == appStop
+    end</pre></li>
+<li>gui.sethandler(id, f): sets up an event handler for an system event or UI control.
+    The function will be automatically called by gui.event() whenever an event is generated.
+    The second parameter is a lua function to be used as the event handler.
+    If the first parameter is the ID of a UI control, like a button, the function
+    will be called whenever the control is selected.
+    If the first parameter is a system event constant (nilEvent, keyEvent, penUp, penDown, penMove, menuSelect,
+    ioPending or sampleStop) the function will be called whenever that event is generated.</li>
+<li>gui.control(table): creates a label, button, pushbutton, repeating button,
+    selector trigger, slider, field, list or popup with custom attributes
+    defined in the table parameter.
+    Returns the ID of the component or nil if it could not be created.</li>
+</ul>
+
+Sound functions:
+<ul>
+<li>sound.beep(n): plays the system sound identified by the number n.
+    Returns nothing.</li>
+<li>sound.tone(freq, len [,volume]): plays a tone with frequency freq (in Hz),
+    duration len (in millisenconds), and optionally volume (0-64).
+    Returns nothing.</li>
+<li>sound.midi(filename [,volume]): plays a Format 0 Standard MIDI file.
+    The MIDI file can be a resource or a database record.
+    If volume (0-64) is not specified, the default system Game volume is used.
+    This function is blocking, that is, it will return only after the MIDI is played
+    to the end. If the user taps on the screen during the play, however, the play interruped.
+    Returns true if the MIDI file was valid and played to the end, or nil and and an error
+    message if the MIDI file was invalid or the play was interrupted. A common error
+    is trying to play the more common Format 1 MIDI, which is not supported by PalmOS.</li>
+<li>sound.play(filename [,slot, volume]): plays sampled sound stored in a WAV file.
+    The WAV file can be a VFS file, a stream file, or a resource.
+    Slot is a number from 1 to 3, allowing up to three simultaneous sampled sounds.
+    If slot is not specified the default value is 1.
+    If volume (0-64) is not specified, the default system Game volume is used.
+    Returns the duration of the sampled sound in seconds, or nil and an error message
+    in case of error. After the sample is played a sampleStop event is generated.</li>
+<li>sound.stop([slot]): stops playing a sampled sound.
+    If slot is not specified the default value is 1. Returns nothing.</li>
+</ul>
+
+Bitwise operator functions:
+<ul>
+<li>bit.andb(n1, n2): returns a bitwise AND between integers n1 and n2.</li>
+<li>bit.orb(n1, n2): returns a bitwise OR between integers n1 and n2.</li>
+<li>bit.xorb(n1, n2): returns a bitwise XOR between integers n1 and n2.</li>
+<li>bit.notb(n): returns a bitwise NOT of integer n.</li>
+</ul>
+
+Binary data functions:
+<ul>
+<li>bin.pack(format, table): packs the elements of a table into a binary
+    string, and the returns this string. The binary data format is specificed by the
+    string argument format, in which each letter refers to a different encoding:
+    b=8 bits signed integer;
+    B=8 bits unsigned integer;
+    w=big endian 16 bits signed integer;
+    W=big endian 16 bits unsigned integer;
+    l=big endian 32 bits signed integer;
+    L=big endian 32 bits unsigned integer;
+    F=big endian 32 bits float;
+    D=big endian 64 bits double;
+    S=variable length string, ended with ASCII null. </li>
+<li>bin.unpack(format, string): unpacks a binary string encoded with bin.pack() and returns
+    a table with the decoded elements.</li>
+<li>bin.md5(string): returns in a 16 byte binary string the MD5 digest of the string argument.</li>
+</ul>
+
+Misc OS functions:
+<ul>
+<li>os.getprefs("creator", id): returns a string with the preferecences
+    specified by creator and id, or nil if it does not exist.</li>
+<li>os.setprefs("creator", id, prefs): sets the preferecences specified by
+    creator and id to the given string prefs. Returns nothing.</li>
+<li>os.sleep(s): pauses the execution for s seconds (s can be a decimal number).
+    Returns nothing.</li>
+<li>os.copy(s): copies the string s to the clipboard. Returns nothing.</li>
+<li>os.paste(): returns a string with the contents of the clipboard.</li>
+<li>os.mem(): returns used memory and total memory, both in KB.</li>
+</ul>
+
+Built-in constants:
+<ul>
+<li>_VERSION: a string with the Lua version number (this is a standard Lua
+    feature).</li>
+<li>_PLUA_VERSION: a string with the Plua version number.</li>
+<li>_OS_VERSION: a string with the PalmOS version number.</li>
+<li>_OS_NAME: a string with the OS name.</li>
+</ul>
+
+<h1>4. A small tutorial</h1>
+
+This section assumes that you are already familiar with the Lua language,
+and focuses on issues related to the Palm platform.
+
+If you don't know the language Lua, don't worry. There is a lot of
+documentation on its home page.
+If you really want to start programming right away without reading
+the docs, here are a few tips:<p />
+<ul>
+<li>Comments start with -- and extend to the end of line.</li>
+<li>Statements are not ended by ";"</li>
+<li>Variables do not need to be declared.</li>
+<li>Variables are not typed, but values are. Values can be numbers,
+  strings, functions or tables. Values are automatically converted to
+  the right type when possible. For example, the code 1+"2" evaluates to 3.</li>
+<li>String concatenation is done with the .. operator. For example, the code
+  "abc".."def" evaluates to "abcdef".</li>
+<li>Multiple assignments are supported. For example, the code x,y=2,3,4
+  assigns 2 to x and 3 to y. Non-used values are discarded (like 4 above).</li>
+<li>Functions can return multiple values. For example, if function f
+  return two values, they can be retrieved using x,y=f()</li>
+<li>You can print a list of expressions using the function print:
+  print(123,"abc",4*5,sin(45))</li>
+</ul>
+
+
+<h3>4.1. The display</h3>
+
+Plua handles your device screen as a bitmapped display where individual
+pixels can be addressed. The "stdout" is also mapped to the display,
+so when you use print the characters are written to the display.
+Plua stores the current cursor position in a pair of numbers (x,y).
+This position is updated whenever you write to the display.<p />
+
+The statement <pre>screen.line(0,0,19,19)</pre> will draw a line from position
+(0,0) to (19,19) and will update the current cursor position to (19,19).
+If the next statement is <pre>write("abc")</pre> the string "abc" will
+be printed starting at position (19,19) and the cursor will be placed at
+(19,19+d), where d is the width in pixels of string "abc" written with
+the current font.<p />
+
+Besides the cursor position, Plua also stores the current foregroung color,
+the current background color and the current font. The following example
+writes the string "Plua" in red over black with the bold font:
+<pre>
+screen.color(screen.rgb(255,0,0), screen.rgb(0,0,0))
+screen.font(1) print("Plua")
+</pre>
+
+Plua works with 1-bit monochromatic displays, 2-bit or 4-bit grayscale displays
+and with 8-bit color displays. The foreground and background colors are
+mapped to the closest grayscale tone in your device, if color is not
+available. You can find the display properties of your device by calling
+the screen.mode() function:
+<pre>
+width, height, depth, hasColor = screen.mode()
+print(width, height, depth, hasColor)
+</pre>
+
+Width and height are the display dimensions in pixels. Depth is 1, 2, 4, or 8,
+and hasColor is 1 if the display supports color, or 0 otherwise. On color
+devices, you can use the screen.rgb() function to get the index of a color given
+its red, green and blue components. The example below will print 125 on 8-bit
+color device using the standard color pallete.
+
+<pre>
+red = screen.rgb(255,0,0)
+print(red)
+</pre>
+
+Plua supports a Logo-like "turtle" pointer. Using screen.walk() and screen.turn() you
+can walk around the display drawing lines. The example below clears the
+display, positions the cursor at the middle of the display and
+draws a small expiral.
+
+<pre>
+screen.clear() w,h = screen.mode() screen.moveto(w/2,h/2)
+for d = 1,20,1 do
+  screen.walk(d) screen.turn(math.rad(-40))
+end
+</pre>
+
+One final note on the display: writing at the end of a line does not make it
+to wrap, and writing at bottom line does not make the display to scroll up.
+
+<h3>4.2. Bitmaps</h3>
+
+Plua supports bitmaps in two different formats: PalmOS native Bitmap format and Windows BMP format. This section shows how you open and display a bitmap centered on the screen. In the following examples, suppose you have a Windows BMP file named "picture.bmp", your application source code is in the file "MyApp.lua" and you registered the Creator ID "MyCr" for your application.
+
+<h4>4.2.1. Using Windows BMP format</h4>
+
+This method uses the bitmap is its original Windows BMP format. PalmOS does not understand the BMP format, but Plua does. The only restrictions are:
+
+<ul>
+<li>The bitmap can not be compressed.</li>
+<li>The bitmap depth must be 1, 4, 8 or 24 bits (16 bits is not supported).</li>
+<li>After the bitmap is read, it is internally converted to 8 bits, even if the display supports a higher depth.</li>
+</ul>
+
+First you need to store the BMP file on your Palm, so that your application can read it. There are three possibilities:<p />
+
+<b>Store the file on a memory card</b><p />
+
+Using a memory card reader, copy "picture.bmp" to some directory on the memory card, for example "/data/picture.bmp". Then your application can use a code like this to open and display the bitmap:
+
+<pre>
+bmp,bmp_width,bmp_height = buffer.read("vfs0:/data/picture.bmp")
+width,height = screen.mode()
+buffer.put(bmp, (width-bmp_width)/2, (height-bmp_height)/2)
+buffer.free(bmp)
+</pre>
+
+Your application can be compiled onboard with Plua, or on the desktop with the Plua desktop compiler. If you want to deploy your application, you must distribute "MyApp.prc" and a memory card with the "picture.bmp" file, which is not very practical. Because of this, you can use the following variation of this method.<p />
+
+<b>Store the file on a stream file</b><p />
+
+Using a memory card reader, copy "picture.bmp" to some directory on the memory card, for example "/data/picture.bmp". Then you need to copy the bitmap from the memory card to a stream file (you need to do this only once). In this example, the stream file is named "Picture":
+
+<pre>
+bmp = buffer.read("vfs0:/data/picture.bmp")
+buffer.write("Picture", bmp)
+buffer.free(bmp)
+</pre>
+
+You have just created a PRC file on your device named "Picture". After this you do not need the file stored on the memory card anymore. Then your application can use the same code as before to open and display the bitmap, except that now it reads the bitmap from the stream file "Picture":
+
+<pre>
+bmp,bmp_width,bmp_height = buffer.read("Picture")
+width,height = screen.mode()
+buffer.put(bmp, (width-bmp_width)/2, (height-bmp_height)/2)
+buffer.free(bmp)
+</pre>
+
+Your application can be compiled onboard with Plua, or on the desktop with the Plua desktop compiler. If you want to deploy your application, you must distribute both "MyApp.prc" and "Picture.prc".<p />
+
+<b>Store the file on a resource</b><p />
+
+This method stores the BMP file in the same PRC file of your application. You must use the Plua desktop compiler to compile your application. This method works only if the Windows bitmap does not exceed 64K.<p />
+
+On your desktop development environment, copy the "picture.bmp" file to a file named "Wbmp07d0.bin" ("Wbmp" is just an arbitrary resource type, 07d0 is 2000 in hexadecimal, which is the ID we chose for the bitmap resource). You must compile your application using a syntax like this:
+
+<pre>
+plua2c -name MyApp -cid MyCr -o MyApp.prc MyApp.lua Wbmp07d0.bin
+</pre>
+
+You can use this code to open and display the bitmap:
+
+<pre>
+bmp,bmp_width,bmp_height = buffer.read("rsrc:/Wbmp/2000")
+width,height = screen.mode()
+buffer.put(bmp, (width-bmp_width)/2, (height-bmp_height)/2)
+buffer.free(bmp)
+</pre>
+
+If you want to deploy your application, you can distribute only "MyApp.prc".
+
+<h4>4.2.2. Using PalmOS Bitmap format</h4>
+
+This method converts the bitmap to the native PalmOS format at compile time. You need a third-party resource compiler, and in this example we use PilRC version 3.2. First you need to build a resource file named "Picture.rcp" with the following contents (this example works only for devices with high-density displays):
+
+<pre>
+BITMAPFAMILYEX ID 2000
+BEGIN
+  BITMAP "Picture.bmp" BPP 8 DENSITY 144
+END
+</pre>
+
+You must compile the resource file with PilRC:
+
+<pre>
+pilrc Picture.rcp
+</pre>
+
+A file named "Tbmp07d0" will be created, containing the bitmap converted to PalmOS format. This method works only if the converted bitmap resource does not exceed 64K. You must compile your application using a syntax like this:
+
+<pre>
+plua2c -name MyApp -cid MyCr -o MyApp.prc MyApp.lua Tbmp07d0.bin
+</pre>
+
+You can use this code to open and display the bitmap:
+
+<pre>
+bmp = resource.open("Tbmp", 2000)
+bmp_size, bmp_width, bmp_height = resource.size(bmp)
+width,height = screen.mode()
+screen.moveto((width-bmp_width)/2, (height-bmp_height)/2)
+resource.draw(bmp)
+resource.close(bmp)
+</pre>
+
+<h3>4.3. Sprites</h3>
+
+Plua provides an easy to use sprite animation engine. This section describes the sprite
+definition table, which is the second argument passed to the sprite.add() function.<p />
+
+The sprite definition table has five mandatory fields:
+<ul>
+<li>x: the sprite x coordinate in pixels.</li>
+<li>y: the sprite y coordinate in pixels.</li>
+<li>bitmap: the sprite bitmap handle (you get it with resource.open).
+    Bitmap transparency is supported and handled automatically.</li>
+<li>active: a boolean flag, telling if sprite is active. An inactive
+    sprite is not shown during the animation.</li>
+<li>collision: a Lua function that is called when the sprite collides
+    with another one. The function is called with two arguments: the
+    sprite definition tables of the two sprites that collided. If you do
+    not want collision detection for a sprite, do not set its collision field.</li>
+</ul>
+
+<p />
+Fields x and y must be updated by your program to move the sprite.
+Coordinates are relative to the background buffer. The bitmap field is
+usually set only once at the beginning, but can also be updated during
+the animation to change the sprite appearance. Since the sprite
+definition table is a regular Lua table, you can use it to store other
+fields belonging to your program logic.
+
+<h3>4.4. User Interface</h3>
+
+The standard PalmOS UI componentes can be easily created and interacted with.
+The usual way to do this is to create a few components and then enter
+a loop waiting for UI events. The following example does exactly this:
+
+<pre>
+textField = gui.field(1,20,20)
+lengthButton = gui.button("Length") gui.nl()
+while true do
+  ev,id = gui.event()
+  if ev == ctlSelect and id == lengthButton then
+    print(string.len(gui.gettext(textField)))
+  elseif ev == appStop then
+    break
+  end
+end
+</pre>
+
+The functions gui.field() and gui.button() create a 1-line text field and a button,
+respectively. The gui.nl() function positions the cursor below the button.
+The infinite loop calls gui.event(), which makes the application block until
+an UI event is generated. In our example, the "Length" button will generate
+the an event (ctlSelect) when it is pressed. gui.event() returns this event ID
+and the component ID (in this case the ID of the button). The program uses
+gui.gettext() to retrieve the current contents of the text field and prints its
+length.<p />
+
+<b>NOTE</b>: since this program enters an infinite loop, the only way to stop
+it is to catch the appStop event and drop out of the loop.<p />
+
+The example below shows gui.input(), gui.alert() and gui.confirm().
+<pre>
+s = gui.input("Write something")
+if s ~= nil then
+  gui.alert("You wrote "..s)
+end
+
+if gui.confirm("Are you tired ?") then
+  print("Me too")
+else
+  print("Me neither")
+end
+</pre>
+
+In order to set a menu for your application, you can use gui.menu() as following.
+
+<pre>
+gui.menu{"O:Open", "Preferences", "-", "Q:Quit"}
+</pre>
+
+The menu will have four items: the fixed "About Plua" item, a fixed separator,
+an "Open" item with "O" as shortcut, a "Preferences" item with no shortcut,
+a separator, and a "Quit" item with "Q" as shortcut. Limitations: currently
+gui.menu() will work only on PalmOS 3.5 or greater (earlier versions do not allow
+dynamic menu configuration), it works only in full-screen mode,
+and it is not possible to define more than one menu in the same menu bar.
+gui.menu() can be called any time, and it will replace the current menu
+with the new one.<p />
+
+When one of the menu items is selected (except the About
+item), a menuSelect event is returned by gui.event(). In the example above,
+if "Preferences" was selected, gui.event() would return menuSelect and the
+number 2, meaning that the second user defined item was selected.
+<p />
+The following table shows all events returned by gui.event(). The general syntax is:<br>
+<pre>
+  event,arg1,arg2 = gui.event(timeout)
+</pre>
+Note that depending on the event, there can be two arguments, one argument, or none.
+Note also that if the system event or control has an event handler, gui.event() will
+not return at all but will call the event handler instead.
+<p />
+
+<table border=1 width=80%>
+<tr>
+<td><b>Source</b></td>
+<td><b>Event</b></td>
+<td><b>Arguments</b></td>
+</tr>
+<tr>
+<td>A menu item is selected</td>
+<td>menuSelect</td>
+<td>Menu item number (starting with 1)</td>
+</tr>
+<tr>
+<td>A button is selected</td>
+<td>ctlSelect</td>
+<td>Control ID<br>Button state</td>
+</tr>
+<tr>
+<td>A pushbutton is selected</td>
+<td>ctlSelect</td>
+<td>Control ID<br>Pushbutton state (1=selected, 0=unselected)</td>
+</tr>
+<tr>
+<td>A checkbox is selected</td>
+<td>ctlSelect</td>
+<td>Control ID<br>Checkbox state (1=selected, 0=unselected)</td>
+</tr>
+<tr>
+<td>A selector trigger is selected</td>
+<td>ctlSelect</td>
+<td>Control ID<br>Selector trigger state</td>
+</tr>
+<tr>
+<td>A slider is moved</td>
+<td>ctlSelect</td>
+<td>Control ID<br>Slider position (starting with 1)</td>
+</tr>
+<tr>
+<td>A repeating button is selected.<br>
+Multiple events are sent while the button remains selected</td>
+<td>ctlRepeat</td>
+<td>Control ID</td>
+</tr>
+<tr>
+<td>A list item is selected</td>
+<td>lstSelect</td>
+<td>Control ID<br>List item number (starting with 1)</td>
+</tr>
+<tr>
+<td>A popup item is selected</td>
+<td>popSelect</td>
+<td>Control ID<br>Popup item number (starting with 1)</td>
+</tr>
+<tr>
+<td>A key is pressed/written</td>
+<td>keyDown</td>
+<td>Key code</td>
+</tr>
+<tr>
+<td>Pen touches the screen (outside of a UI control)</td>
+<td>penDown</td>
+<td>X coordinate<br>Y coordinate</td>
+</tr>
+<tr>
+<td>Pen moves on the screen (outside of a UI control)</td>
+<td>penMove</td>
+<td>X coordinate<br>Y coordinate</td>
+</tr>
+<tr>
+<td>Pen leaves the screen (outside of a UI control)</td>
+<td>penUp</td>
+<td>X coordinate<br>Y coordinate</td>
+</tr>
+<tr>
+<td>gui.event(n) timeout expires</td>
+<td>nilEvent</td>
+<td>None</td>
+</tr>
+<tr>
+<td>gui.event(n) exits because of pending I/O</td>
+<td>ioPending</td>
+<td>None</td>
+</tr>
+<tr>
+<td>A sample started with sound.play() finishes</td>
+<td>sampleStop</td>
+<td>Slot number (1 to 3)</td>
+</tr>
+<tr>
+<td>User exits the application using the "Home" button()</td>
+<td>appStop</td>
+<td>None</td>
+</tr>
+</table>
+
+<p />
+The following table lists the fields used to create UI controls with
+the gui.control() function. This single function can be used to create
+controls that would be created with gui.label, gui.button, gui.pbutton,
+gui.rbutton, gui.checkbox, gui.selector, gui.slider, gui.field,
+gui.list and gui.popup.
+<p />
+
+<table border=1 width=80%>
+<tr>
+<td><b>Type</b></td>
+<td><b>Field name</b></td>
+<td><b>Field type</b></td>
+<td><b>Meaning</b></td>
+<td><b>Default value</b></td>
+</tr>
+
+<tr>
+<td rowspan=4>label</td>
+<td>text</td>
+<td>string</td>
+<td>label text</td>
+<td>empty string</td>
+</tr>
+<tr>
+<td>x</td>
+<td>number</td>
+<td>top left x position</td>
+<td>current x position</td>
+</tr>
+<tr>
+<td>y</td>
+<td>number</td>
+<td>top left y position</td>
+<td>current y position</td>
+</tr>
+<tr>
+<td>font</td>
+<td>number</td>
+<td>text font</td>
+<td>current font</td>
+</tr>
+
+<tr>
+<td rowspan=10>button, pbutton, rbutton, checkbox, selector</td>
+<td>text</td>
+<td>string</td>
+<td>control text</td>
+<td>empty string</td>
+</tr>
+<tr>
+<td>bitmap</td>
+<td>number</td>
+<td>bitmap resource id</td>
+<td>use text if bitmap is not defined</td>
+</tr>
+<tr>
+<td>group</td>
+<td>number</td>
+<td>group id for pushbuttons</td>
+<td>0</td>
+</tr>
+<tr>
+<td>state</td>
+<td>number</td>
+<td>0=not selected, 1=selected</td>
+<td>0</td>
+</tr>
+<tr>
+<td>x</td>
+<td>number</td>
+<td>top left x position</td>
+<td>current x position</td>
+</tr>
+<tr>
+<td>y</td>
+<td>number</td>
+<td>top left y position</td>
+<td>current y position</td>
+</tr>
+<tr>
+<td>width</td>
+<td>number</td>
+<td>control width</td>
+<td>text/bitmap width plus some spacing</td>
+</tr>
+<tr>
+<td>height</td>
+<td>number</td>
+<td>control height</td>
+<td>text/bitmap height plus some spacing</td>
+</tr>
+<tr>
+<td>font</td>
+<td>number</td>
+<td>text font</td>
+<td>current font</td>
+</tr>
+<tr>
+<td>handler</td>
+<td>function</td>
+<td>event handler function</td>
+<td>do not use an event handler</td>
+</tr>
+
+<tr>
+<td rowspan=7>slider</td>
+<td>state</td>
+<td>number</td>
+<td>initial position (starts at 1)</td>
+<td>1</td>
+</tr>
+<tr>
+<td>limit</td>
+<td>number</td>
+<td>maximum position</td>
+<td>10</td>
+</tr>
+<tr>
+<td>x</td>
+<td>number</td>
+<td>top left x position</td>
+<td>current x position</td>
+</tr>
+<tr>
+<td>y</td>
+<td>number</td>
+<td>top left y position</td>
+<td>current y position</td>
+</tr>
+<tr>
+<td>width</td>
+<td>number</td>
+<td>slider width</td>
+<td>80 pixels</td>
+</tr>
+<tr>
+<td>height</td>
+<td>number</td>
+<td>slider height</td>
+<td>calculated slider height plus some spacing</td>
+</tr>
+<tr>
+<td>handler</td>
+<td>function</td>
+<td>event handler function</td>
+<td>do not use an event handler</td>
+</tr>
+
+<tr>
+<td rowspan=9>field</td>
+<td>text</td>
+<td>string</td>
+<td>initial text</td>
+<td>empty string</td>
+</tr>
+<tr>
+<td>lines</td>
+<td>number</td>
+<td>number of lines, if > 1 field has a scroll bar</td>
+<td>1</td>
+</tr>
+<tr>
+<td>columns</td>
+<td>number</td>
+<td>number of columns</td>
+<td>16</td>
+</tr>
+<tr>
+<td>limit</td>
+<td>number</td>
+<td>maximum characters</td>
+<td>lines * columns</td>
+</tr>
+<tr>
+<td>x</td>
+<td>number</td>
+<td>top left x position</td>
+<td>current x position</td>
+</tr>
+<tr>
+<td>y</td>
+<td>number</td>
+<td>top left y position</td>
+<td>current y position</td>
+</tr>
+<tr>
+<td>editable</td>
+<td>boolean</td>
+<td>if true user can edit text</td>
+<td>true</td>
+</tr>
+<tr>
+<td>underlined</td>
+<td>boolean</td>
+<td>if true lines are underlined</td>
+<td>true</td>
+</tr>
+<tr>
+<td>font</td>
+<td>number</td>
+<td>text font</td>
+<td>current font</td>
+</tr>
+
+<tr>
+<td rowspan=8>list</td>
+<td>list</td>
+<td>table</td>
+<td>list items</td>
+<td>this field is mandatory</td>
+</tr>
+<tr>
+<td>lines</td>
+<td>number</td>
+<td>number of lines</td>
+<td>number of items in the list</td>
+</tr>
+<tr>
+<td>columns</td>
+<td>number</td>
+<td>number of columns</td>
+<td>16</td>
+</tr>
+<tr>
+<td>selected</td>
+<td>number</td>
+<td>initially selected item (starts at 1)</td>
+<td>1</td>
+</tr>
+<tr>
+<td>x</td>
+<td>number</td>
+<td>top left x position</td>
+<td>current x position</td>
+</tr>
+<tr>
+<td>y</td>
+<td>number</td>
+<td>top left y position</td>
+<td>current y position</td>
+</tr>
+<td>font</td>
+<td>number</td>
+<td>text font</td>
+<td>current font</td>
+</tr>
+<tr>
+<td>handler</td>
+<td>function</td>
+<td>event handler function</td>
+<td>do not use an event handler</td>
+</tr>
+
+<tr>
+<td rowspan=6>popup</td>
+<td>list</td>
+<td>table</td>
+<td>popup items</td>
+<td>this field is mandatory</td>
+</tr>
+<td>selected</td>
+<td>number</td>
+<td>initially selected item (starts at 1)</td>
+<td>1</td>
+</tr>
+<tr>
+<td>x</td>
+<td>number</td>
+<td>top left x position</td>
+<td>current x position</td>
+</tr>
+<tr>
+<td>y</td>
+<td>number</td>
+<td>top left y position</td>
+<td>current y position</td>
+</tr>
+<td>font</td>
+<td>number</td>
+<td>text font</td>
+<td>current font</td>
+</tr>
+<tr>
+<td>handler</td>
+<td>function</td>
+<td>event handler function</td>
+<td>do not use an event handler</td>
+</tr>
+
+</table>
+
+<p />
+The gui.control() function expects a a table as its single argument.
+The table has a mandatory field named "type", and its value must be one of the
+values listed in the first column on the table above.
+Other fields are optional (except where noted), and have default values as defined above.
+For example, these two forms are equivalent:
+
+<pre>
+gui.button("OK")
+gui.control{type="button", text="OK"}
+</pre>
+
+Note that the second form uses the abbreviated way of passing a single table
+argument to a Lua function, that is, it uses brackets instead of parenthesis.
+The gui.control function can do everything that gui.label, gui.button,
+gui.pbutton, gui.rbutton, gui.checkbox, gui.selector, gui.slider, gui.field,
+gui.list and gui.popup can, althoug using a little longer syntax.
+Additionally, it can set parameters that the other functions can not,
+like the width and height of a control:
+
+<pre>
+gui.control{type="button", text="OK", width=30}
+</pre>
+
+All controls except labels and fields can have an event handler. If the event handler is set,
+it will be automatically called by gui.event() whenever the control is
+selected. System events also can have event handlers, set with gui.sethandler().
+
+The arguments of the event handler call are the same as
+the values that would be returned by gui.event() if there was no event handler.
+
+<h3>4.5. File I/O</h3>
+
+Although PalmOS does not have a true filesystem, Plua provides the Lua virtual
+machine the illusion that the underlying OS supports file I/O.
+The "stdout" descriptor is mapped to the display.
+The "stderr" descriptor is mapped to a dialog box that shows what was printed
+on stderr.<p />
+
+Regular files are implemented using the File Stream API of PalmOS, so Lua
+programs can open, create, read from and write to files normaly, without
+knowing about database types or database creators. The following example
+shows this:
+
+<pre>
+f = io.open("MyOutput", "w")
+f:write("This is being written to a PalmOS stream database")
+f:close()
+</pre>
+
+The database MyOutput is open for writting (it is created if it does not
+exist), a string is written to it, and it is closed.
+There are also functions that allow a program to manipulate a PalmOS database
+directly, if desired. They were listed in the section "Extensions to the
+standard Lua distribution" above. The example below iterates through all
+MemoPad records and prints the first line of each record:
+
+<pre>
+f,n = io.open("db:/MemoDB", "r")
+for i = 0,n-1,1 do
+  f:openrec(i)
+  s = f:read("*l")
+  print(s)
+end
+f:close()
+</pre>
+
+The I/O functions work with both stream files and regular databases. With regular databases,
+each record works like a sub-file, that is, they can be read from the
+begining to the end, when an EOF conditions is signaled. In order to
+continue to read the database, openrec() must be called to open the next
+record and so on.<p />
+
+Listed below are the modes available for opening files with io.open().
+
+<ul>
+<li>"r": open for reading.</li>
+<li>"r+": open/create for reading/writing.
+     If the file exists it is preserved, if the file does not exist it is created.</li>
+<li>"w": open/create for writing.
+     If the file exists it is truncated, if the file does not exist it is created.</li>
+<li>"a": open/create for writing.
+     If the file exists it is preserved and the file pointer is positioned at the end,
+     if the file does not exist it is created.</li>
+</ul>
+
+If a database is beeing created, the creator ID is inherited from Plua and the type
+is always 'data'. The io.open() function can not create new records inside databases,
+the only way to create records is with the createrec() function. Database records can not
+be resized by writing beyond the last byte, the only way to resize records is with
+the resizerec() function.<p />
+
+Besides streams and databases, Plua also supports access to other I/O facilities, like
+resources, VFS files, TCP/IP sockets, or any device accessible by the PalmOS New Serial Manager.
+The following table shows all supported file types, the io.open() syntax and wether each
+mode is supported.
+<p />
+
+<table border=1>
+<tr>
+<td><b>Type</b></td>
+<td><b>File name syntax</b></td>
+<td><b>r</b></td>
+<td><b>r+</b></td>
+<td><b>w</b></td>
+<td><b>a</b></td>
+<td><b>Example</b></td>
+</tr>
+<tr>
+<td>Stream database</td>
+<td>name</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>io.open("MyStream", "a")</td>
+</tr>
+<tr>
+<td>VFS file</td>
+<td>vfsn:/path</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>io.open("vfs0:/Palm/Programs/Readme.txt", "r")</td>
+</tr>
+<tr>
+<td>Regular database</td>
+<td>db:/name</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>No</td>
+<td>io.open("db:/MyDatabase", "r")</td>
+</tr>
+<tr>
+<td>Regular database record</td>
+<td>db:/name/index</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>No</td>
+<td>io.open("db:/MyDatabase/5", "r")</td>
+</tr>
+<tr>
+<td>Memo database</td>
+<td>memo:/name</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>No</td>
+<td>io.open("memo:/Data", "w")</td>
+</tr>
+<tr>
+<td>Doc database</td>
+<td>name</td>
+<td>Yes</td>
+<td>No</td>
+<td>No</td>
+<td>No</td>
+<td>io.open("MyDoc", "r")</td>
+</tr>
+<tr>
+<td>Compiled Plua library (used by dofile)</td>
+<td>name</td>
+<td>Yes</td>
+<td>No</td>
+<td>No</td>
+<td>No</td>
+<td>io.open("MyLib", "r")</td>
+</tr>
+<tr>
+<td>Resource</td>
+<td>rsrc:/type/id</td>
+<td>Yes</td>
+<td>No</td>
+<td>No</td>
+<td>No</td>
+<td>io.open("rsrc:/Data/1000", "r")</td>
+</tr>
+<tr>
+<td>TCP socket</td>
+<td>tcp:/host:port</td>
+<td colspan=4 align=center>Ignored</td>
+<td>io.open("tcp:/www.lua.org:80")</td>
+</tr>
+<tr>
+<td>UDP socket</td>
+<td>udp:/host:port</td>
+<td colspan=4 align=center>Ignored</td>
+<td>io.open("udp:/host.com:7")</td>
+</tr>
+<tr>
+<td>Serial Manager - serial craddle</td>
+<td>srm:/serial/baud/word</td>
+<td colspan=4 align=center>Ignored</td>
+<td>io.open("srm:/serial/9600/8N1")</td>
+</tr>
+<tr>
+<td>Serial Manager - USB craddle</td>
+<td>srm:/usb/baud/word</td>
+<td colspan=4 align=center>Ignored</td>
+<td>io.open("srm:/usb/9600/8N1")</td>
+</tr>
+<tr>
+<td>Serial Manager - craddle (auto-detect serial or USB)</td>
+<td>srm:/craddle/baud/word</td>
+<td colspan=4 align=center>Ignored</td>
+<td>io.open("srm:/craddle/9600/8N1")</td>
+</tr>
+<tr>
+<td>Serial Manager - raw infrared</td>
+<td>srm:/ir/baud/word</td>
+<td colspan=4 align=center>Ignored</td>
+<td>io.open("srm:/ir/9600/8N1")</td>
+</tr>
+<tr>
+<td>Serial Manager - IrCOMM (serial over IR)</td>
+<td>srm:/ircm/baud/word</td>
+<td colspan=4 align=center>Ignored</td>
+<td>io.open("srm:/ircm/9600/8N1")</td>
+</tr>
+<tr>
+<td>Serial Manager - RFCOMM (serial over Bluetooth)</td>
+<td>srm:/rfcm/baud/word</td>
+<td colspan=4 align=center>Ignored</td>
+<td>io.open("srm:/rfcm/9600/8N1")</td>
+</tr>
+<tr>
+<td>Serial Manager - arbitrary device with creator 'abcd'</td>
+<td>srm:/abcd/baud/word</td>
+<td colspan=4 align=center>Ignored</td>
+<td>io.open("srm:/abcd/9600/8N1")</td>
+</tr>
+<tr>
+<td>Driver registered with prefix 'xyz' (developed with libkit)</td>
+<td>xyz:/path</td>
+<td colspan=4 align=center>Configurable</td>
+<td>io.open("xyz:/SomePath", "w")</td>
+</tr>
+</table>
+<p />
+
+TCP and UDP sockets accept optional parameters after the "host:port" in the file name.
+You can specify up to three timeout options separated by "/": DNS lookup timeout,
+connect timeout and linger timeout. In the following example PalmOS will wait up to 5 seconds
+to resolve the name "host.domain.com" and up to 10 seconds to estabilish a connection
+to this host: 
+
+<pre>
+sock,err = io.open("tcp:/host.domain.com:2000/5/10")
+</pre>
+
+If any of these timeouts is reached, the io.open() call will fail with the
+appropriate error message. The default value for DNS lookup and connect timeouts
+is 8 seconds each. The third optional parameter controls lingering on closing the
+socket. If it is not present, like in the example above, lingering is disabled.
+The following example turns lingering on and set it to 2 seconds:
+
+<pre>
+sock,err = io.open("tcp:/host.domain.com:2000/5/10/2")
+ ...
+sock:close()
+</pre>
+
+After the sock:close() call, PalmOS will wait up to 2 seconds for data before
+shutting down the socket. This timeout does not raise any error.
+
+<p />
+
+<p />
+The standard dofile() function works with Lua source code or
+compiled applications. If there is a Doc file named "name.lua", for example,
+it can be included by using dofile("name.lua"). For applications,
+the compiled lua code can be included by using dofile("appname"),
+where "appname" is the PRC name.<p />
+
+A note about error handling in file I/O: in case of success, the functions
+marked as returning true in fact return an userdata value (which is true,
+since any non-nil value is considered true in Lua). The value of this
+userdata is not important, it is used just to make it different from false
+(nil). In case of failure, all I/O functions
+(except for read) return two additional values besides nil.
+The second value is a string with the error message and
+the third value is the numeric error code. The error messages/codes are
+inspired on the Unix C Library (libc) errors. Currently the following errors
+may be reported:
+
+<ul>
+<li>ENOENT: No such file or directory</li>
+<li>EINTR: Interrupted system call</li>
+<li>EIO: Input/output error</li>
+<li>EBADF: Bad file descriptor</li>
+<li>ENOMEM: Cannot allocate memory</li>
+<li>EACCES: Permission denied</li>
+<li>EBUSY: Device busy</li>
+<li>EEXIST: File exists</li>
+<li>ENODEV: Operation not supported by device</li>
+<li>EINVAL: Invalid argument</li>
+<li>EMFILE: Too many open files</li>
+<li>EFBIG: File too large</li>
+<li>ENOTDIR: Not a directory</li>
+<li>EISDIR: Is a directory</li>
+<li>ENOSPC: No space left on device</li>
+<li>ENETDOWN: Network is down</li>
+<li>ENOTCONN: Socket is not connected</li>
+<li>EMSGSIZE: Message too long</li>
+<li>EINPROGRESS: Operation now in progress</li>
+<li>ENXIO: Device not configured</li>
+<li>EOPNOTSUPP: Operation not supported</li>
+<li>EADDRINUSE: Address already in use</li>
+<li>ETIMEDOUT: Operation timed out</li>
+<li>EISCONN: Socket is already connected</li>
+<li>ECONNRESET: Connection reset by peer</li>
+<li>ESOCKTNOSUPPORT: Socket type not supported</li>
+<li>EPROTONOSUPPORT: Protocol not supported</li>
+<li>ENETUNREACH: Network is unreachable</li>
+<li>EWOULDBLOCK: Operation would block</li>
+<li>EALREADY: Operation already in progress</li>
+<li>EADDRNOTAVAIL: Can't assign requested address</li>
+<li>ECONNREFUSED: Connection refused</li>
+<li>EHOSTUNREACH: No route to host</li>
+</ul>
+
+For example, suppose open() is used to open a database, like in
+the following code:
+
+<pre>
+f,n,e = io.open("db:/Test", "r")
+</pre>
+
+If there is a database named Test, f will be assigned a handle to the opened
+database, n will be assigned the number of records in the database and
+e will be assigned nil. However, if there is no databse named Test, f will
+assigned nil, n will be assigned the string "No such file or directory" and e
+will be assigned 2 (the numeric code for ENOENT). This example illustrates how a function may
+return different number of values (and possibly of different types) depending
+on its execution.
+<p />
+
+The following example shows how to open the serial port and wait for data
+in a efficient way.
+
+<pre>
+f = io.open("srm:/serial/57600/8N1")
+while true do
+  ev = gui.event()
+  if ev == ioPending then
+    s = f:read(8)
+    print(s)
+  elseif ev == appStop then
+    break
+  end
+end
+f:close()
+</pre>
+
+When data is available at the serial port the ioPending event is sent.
+Note that it is not possible to know how much data is available. The read()
+function reads at most 8 bytes and returns. If less than 8 bytes are
+available, read() returns them without blocking. If more than
+8 bytes are available, they remaining bytes are hold in the Serial Manager
+buffer. In the next loop interaction, another io.ioPending event will be sent,
+and so on.<p />
+
+<h3>4.6. Binary data</h3>
+
+Most PalmOS applications save persistent data in one or more PDB's. This information
+is written in binary form, that is, a sequence of bytes usually representing the
+encoding of a C structure. In Lua, however, information is stored in numbers,
+strings and tables, and their internal binary representation is not relevant.
+
+In order to read and write binary data, Plua provides the functions bin.pack() and
+bin.unpack(). The following example shows the usage of these functions along with
+database access functions.<p />
+
+Storing a a table into a PDB record:<p />
+
+<pre>
+example = {25, "Plua", 3.1416, 9999}
+data = bin.pack("BSDW", example)
+f = io.open("db:/MyBinaryData", "w")
+index = f:createrec(string.len(data))
+f:openrec(index)
+f:write(data)
+f:close()
+</pre>
+
+<p />According to the format string "BSDW", the number 25 (the first element) is packed as
+a byte, the string "Plua" is packed as a null-terminated string,
+the number 3.1416 is packed as a double and the number 9999 is packed as
+a 16 bit word. The returned data is a binary string of 1+5+8+2 = 16 bytes.
+This data is stored as record in the MyBinaryData PDB.<p />
+
+Reading the same record into a table:<p />
+
+<pre>
+f = io.open("db:/MyBinaryData", "r")
+f:openrec(index)
+data = f:read("*a")
+example = bin.unpack("BSDW", data)
+f:close()
+</pre>
+
+<p />After this, the returned table will have the same elements as the original one.
+
+<h3>4.7. Libraries</h3>
+
+You can use compiled Plua applications as libraries. Lets say you have a set of
+useful Lua functions and you want to make them available to other developers.
+The obvious way is to distribute the source code, but there is an alternative:
+place the functions inside a MemoPad record or Doc file and compile it just
+like a regular application. For example, if the generated PRC is named
+"MyLib", another application can simply use dofile("MyLib") to load the 
+functions. To distribute your "library", you have to distribute the PRC named "MyLib.prc" that was created when you compiled it.<p />
+
+For a description on how to build C libraries and integrate them into Plua,
+please look at the libkit examples.
+
+</body>
+</html>
